@@ -1,0 +1,59 @@
+.tempadmin-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+  }
+  
+  .tempadmin-navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    background-color: #f4f4f4;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  .tempadmin-logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+  
+  .tempadmin-nav-links {
+    display: flex;
+    align-items: center;
+    list-style: none;
+    gap: 1rem;
+  }
+  
+  .tempadmin-nav-links li a {
+    text-decoration: none;
+    color: #333;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+  }
+  
+  .tempadmin-nav-links li a.active {
+    background-color: #007bff;
+    color: white;
+  }
+  
+  .logout-button {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .total-amount {
+    font-weight: bold;
+    color: #28a745;
+  }
+  
+  .tempadmin-content {
+    flex-grow: 1;
+    padding: 2rem;
+    overflow-y: auto;
+  }

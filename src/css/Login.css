@@ -1,0 +1,228 @@
+/* Container Styling */
+.loginbox {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f0f8ff;
+  position: relative;
+}
+
+.loginbox1 {
+  background-color: white;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  max-width: 380px;
+  width: 100%;
+}
+
+.loginh1 {
+  color: #007bff;
+  margin-bottom: 20px;
+  font-weight: bold;
+}
+
+.logininput {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  margin: 8px 0;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-sizing: border-box;
+  font-size: 14px;
+}
+
+.loginbutton {
+  width: 100%;
+  padding: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.loginbutton:hover {
+  background-color: #0056b3;
+}
+
+.signup-link {
+  margin-top: 12px;
+  font-size: 14px;
+}
+
+.signup-link a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.signup-link a:hover {
+  text-decoration: underline;
+}
+
+/* Success/Error Message Styling */
+.loginmessage {
+  margin-top: 10px;
+  color: #fff;
+  font-size: 14px;
+  padding: 8px;
+  border-radius: 5px;
+  animation: slideIn 0.5s ease-out;
+}
+
+.loginmessage {
+  background-color: #28a745;
+}
+
+.loginmessage.error {
+  background-color: #ff4d4d;
+  animation: slideIn 0.1s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+      transform: translateY(30px);
+      opacity: 0;
+  }
+  to {
+      transform: translateY(0);
+      opacity: 1;
+  }
+}
+
+/* Reset Password Modal */
+.reset-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.reset-modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 280px;
+  text-align: center;
+}
+
+.reset-email-input {
+  width: 100%;
+  padding: 8px;
+  margin-top: 8px;
+  font-size: 14px;
+}
+
+.reset-button {
+  background-color: #007bff;
+  color: white;
+  padding: 8px;
+  border: none;
+  cursor: pointer;
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+.cancel-button {
+  background-color: #f44336;
+  color: white;
+  padding: 8px;
+  border: none;
+  cursor: pointer;
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+/* Password Input Styling */
+.password-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.forgotpasswordlink {
+  cursor: pointer;
+  text-decoration: underline;
+  color: blueviolet;
+  font-size: 12px;
+  display: inline-block;
+}
+
+.show-password {
+  cursor: pointer;
+  font-size: 14px;
+}
+
+/* Ensure buttons in the Reset Password modal have spacing */
+.reset-modal-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.reset-buttons {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.reset-button {
+  background-color: #007bff;
+  color: white;
+  padding: 8px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  flex: 1;
+  margin-right: 10px;
+}
+
+.cancel-button {
+  background-color: #f44336;
+  color: white;
+  padding: 8px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  flex: 1;
+}
+
+.show {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  margin-top: 8px;
+  gap: 8px;
+}
+
+.show-password {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.forgotpasswordlink {
+  cursor: pointer;
+  text-decoration: underline;
+  color: blueviolet;
+  font-size: 12px;
+  display: inline-block;
+  text-align: center;
+}

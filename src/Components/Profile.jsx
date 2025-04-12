@@ -25,7 +25,7 @@ function Profile() {
         setUserData({
           name: user.displayName || 'User',
           email: user.email,
-          phno: '',
+          phno: user.phno,
           profileImageUrl: user.photoURL || ''
         });
       }

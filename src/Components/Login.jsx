@@ -12,20 +12,20 @@ function Login({ onLogin }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
-  const [messageType, setMessageType] = useState(""); // success or error
+  const [messageType, setMessageType] = useState(""); 
   const [showPassword, setShowPassword] = useState(false);
   const [showResetModal, setShowResetModal] = useState(false);
   const [resetEmail, setResetEmail] = useState("");
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   
-  // Hardcoded admin emails like in Android code
-  const admins = ["saleem1712005@gmail.com", "jayaraman00143@gmail.com","abcd1234@gmail.com"];
+  
+  const admins = ["saleem1712005@gmail.com", "jayaraman00143@gmail.com", "abcd1234@gmail.com"];
   const [tempAdmins, setTempAdmins] = useState([]);
 
   // Fetch temp admins from Firebase on component mount
   useEffect(() => {
-    const tempAdminsRef = ref(database, "tempadmin1");
+    const tempAdminsRef = ref(database, "tempadmin");
     
     onValue(tempAdminsRef, (snapshot) => {
       const tempAdminsList = [];
@@ -33,6 +33,7 @@ function Login({ onLogin }) {
         snapshot.forEach((childSnapshot) => {
           const tempAdminEmail = childSnapshot.child("email").val();
           if (tempAdminEmail) {
+            console.log(tempAdminEmail);
             tempAdminsList.push(tempAdminEmail);
           }
         });
@@ -62,7 +63,7 @@ function Login({ onLogin }) {
       return;
     }
 
-    // Show loading state
+    
     setMessage("Logging in, please wait...");
     setMessageType("loading");
 
@@ -73,15 +74,23 @@ function Login({ onLogin }) {
         
         // Determine user type based on email
         let userType = "user";
-        if (admins.includes(email)) {
+        
+        // First check if the email is in the admins list
+        if (admins.includes(email.toLowerCase())) {
           userType = "admin";
-        } else if (tempAdmins.includes(email)) {
+        } 
+        // Then check if the email is in the tempAdmins list
+        else if (tempAdmins.includes(email.toLowerCase())) {
           userType = "tempadmin";
         }
         
         // Navigate based on user type
         setTimeout(() => {
-          onLogin();
+          // Only call onLogin if it's a function
+          if (typeof onLogin === 'function') {
+            onLogin();
+          }
+          
           if (userType === "admin") {
             navigate("/admin");
           } else if (userType === "tempadmin") {

@@ -75,10 +75,9 @@ function Navbar({ user, profileImageUrl }) {
     closeMenu();
   }, [location.pathname]);
 
-  if (!user || ["/login", "/signup", "/admin", "/tempadmin"].includes(location.pathname)) {
-    return null;
-  }
-
+  // We'll handle the visibility check in the App component
+  // This component will only be rendered for regular users now
+  
   const getActiveClass = (path) => (location.pathname === path ? "active" : "");
 
   return (
@@ -97,45 +96,39 @@ function Navbar({ user, profileImageUrl }) {
               </button>
             </div>
             
-            
-
-            
             <div className="nav-actions">
-
-            <ul className="nav-links">
-              <li>
-                <Link to="/home" className={getActiveClass("/home")}>
-                  <i className="bx bx-home-alt"></i>
-                  <span>Home</span>
-                </Link>
-              </li>
-              <li>
-                <Link to="/shop" className={getActiveClass("/shop")}>
-                  <i className="bx bx-store"></i>
-                  <span>Shop</span>
-                </Link>
-              </li>
-              <li>
-                <Link to="/xerox" className={getActiveClass("/xerox")}>
-                  <i className="bx bx-copy"></i>
-                  <span>Xerox</span>
-                </Link>
-              </li>
-            </ul>
+              <ul className="nav-links">
+                <li>
+                  <Link to="/home" className={getActiveClass("/home")}>
+                    <i className="bx bx-home-alt"></i>
+                    <span>Home</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/shop" className={getActiveClass("/shop")}>
+                    <i className="bx bx-store"></i>
+                    <span>Shop</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/xerox" className={getActiveClass("/xerox")}>
+                    <i className="bx bx-copy"></i>
+                    <span>Xerox</span>
+                  </Link>
+                </li>
+              </ul>
               <div className="cart-pro">
                 <Link to="/cart" className={`cart-icon ${getActiveClass("/cart")}`}>
                   <i className="bx bx-shopping-bag"></i>
                 </Link>
                 
-                {user && (
-                  <Link to="/profile" className={`profile-link ${getActiveClass("/profile")}`}>
-                    <img
-                      src={profileImageUrl || "person3.jpg"}
-                      alt="Profile"
-                      className="profile-image"
-                    />
-                  </Link>
-                )}
+                <Link to="/profile" className={`profile-link ${getActiveClass("/profile")}`}>
+                  <img
+                    src={profileImageUrl || "person3.jpg"}
+                    alt="Profile"
+                    className="profile-image"
+                  />
+                </Link>
               </div>
             </div>
           </nav>
@@ -292,6 +285,26 @@ function App() {
     }
   }, [navigate, tempAdmins]);
 
+  // Function to check if the current route should show navbar
+  const shouldShowNavbar = () => {
+    // Only show navbar for regular users (not admin/tempadmin)
+    if (userRole !== "user") {
+      return false;
+    }
+    
+    // Don't show navbar on login/signup pages
+    if (["/login", "/signup"].includes(location.pathname)) {
+      return false;
+    }
+    
+    // Don't show navbar on admin/tempadmin routes
+    if (location.pathname.startsWith("/admin") || location.pathname.startsWith("/tempadmin")) {
+      return false;
+    }
+    
+    return true;
+  };
+
   if (loading) {
     return <div className="loading-container">
       <div className="loading-spinner"></div>
@@ -301,9 +314,8 @@ function App() {
 
   return (
     <>
-      {user && 
-       userRole === "user" && 
-       !["/login", "/signup"].includes(location.pathname) && (
+      {/* Only show navbar for regular users on appropriate routes */}
+      {user && shouldShowNavbar() && (
         <Navbar user={user} profileImageUrl={profileImageUrl} />
       )}
 

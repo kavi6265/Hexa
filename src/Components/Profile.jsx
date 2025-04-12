@@ -44,7 +44,17 @@ function Profile() {
       auth.signOut()
         .then(() => {
           localStorage.removeItem('cart');
-          navigate("/login");
+          localStorage.removeItem("userEmail");
+    localStorage.removeItem("userId");
+    localStorage.removeItem("userRole");
+    
+    // Reset all user-related state
+    setUser(null);
+    setProfileImageUrl(null);
+    setUserRole("user");
+    
+    // Navigate to login page
+    navigate("/login");
         })
         .catch((error) => {
           console.error("Error logging out:", error);

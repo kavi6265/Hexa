@@ -46,7 +46,7 @@ function Tempadmincontrol() {
 
     try {
       // Sanitize email to be a valid Firebase key
-      const sanitizedEmail = email.replace(/\./g, '_');
+      const sanitizedEmail = email.replace(/\./g, ',');
       
       // Reference to the tempadmin node in Firebase
       const adminRef = ref(database, `tempadmin/${sanitizedEmail}`);

@@ -21,6 +21,7 @@ function Signup() {
   const navigate = useNavigate();
 
   // Hardcoded admin emails like in Android code
+
   const admins = ["saleem1712005@gmail.com", "jayaraman00143@gmail.com","abcd1234@gmail.com"];
   const [tempAdmins, setTempAdmins] = useState([]);
   const address = "Paavai Engineering College,Pachal,Tamilnadu,637018";
@@ -28,6 +29,7 @@ function Signup() {
   // Fetch temp admins from Firebase on component mount
   useEffect(() => {
     const tempAdminsRef = ref(database, "tempadmin");
+    
     
     onValue(tempAdminsRef, (snapshot) => {
       const tempAdminsList = [];

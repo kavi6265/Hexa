@@ -5,12 +5,24 @@ function Admin() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  function handleLogout() {
-    if (auth.currentUser?.uid) {
-      auth.signOut();
+  const handleLogout = () => {
+    auth.signOut().then(() => {
+      // Clear all user data from localStorage
+      localStorage.removeItem("userEmail");
+      localStorage.removeItem("userId");
+      localStorage.removeItem("userRole");
+      
+      // Reset all user-related state
+      setUser(null);
+      setProfileImageUrl(null);
+      setUserRole("user");
+      
+      // Navigate to login page
       navigate("/login");
-    }
-  }
+    }).catch((error) => {
+      console.error("Error signing out: ", error);
+    });
+  };
 
   function getActiveClass(path) {
     return location.pathname === path ? "active" : "";

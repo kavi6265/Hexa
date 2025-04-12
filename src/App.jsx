@@ -74,9 +74,6 @@ function Navbar({ user, profileImageUrl }) {
   useEffect(() => {
     closeMenu();
   }, [location.pathname]);
-
-  // We'll handle the visibility check in the App component
-  // This component will only be rendered for regular users now
   
   const getActiveClass = (path) => (location.pathname === path ? "active" : "");
 
@@ -154,47 +151,12 @@ function App() {
   const [profileImageUrl, setProfileImageUrl] = useState(null);
   const [userRole, setUserRole] = useState("user"); // Default role
   const [loading, setLoading] = useState(true);
+  const [tempAdmins, setTempAdmins] = useState([]);
   const navigate = useNavigate();
   const location = useLocation();
 
   // Hardcoded admin emails
   const admins = ["saleem1712005@gmail.com", "jayaraman00143@gmail.com", "abcd1234@gmail.com"];
-  const [tempAdmins, setTempAdmins] = useState([]);
-
-  // Fetch temp admins from Firebase
-  useEffect(() => {
-    const tempAdminsRef = ref(database, "tempadmin1");
-    
-    const fetchTempAdmins = onValue(tempAdminsRef, (snapshot) => {
-      const tempAdminsList = [];
-      if (snapshot.exists()) {
-        snapshot.forEach((childSnapshot) => {
-          const tempAdminEmail = childSnapshot.child("email").val();
-          if (tempAdminEmail) {
-            tempAdminsList.push(tempAdminEmail);
-          }
-        });
-      }
-      setTempAdmins(tempAdminsList);
-      setLoading(false);
-    }, (error) => {
-      console.error("Error fetching temp admins:", error);
-      setLoading(false);
-    });
-    
-    return () => fetchTempAdmins();
-  }, []);
-
-  // Determine user role based on email
-  const determineUserRole = (email) => {
-    if (admins.includes(email)) {
-      return "admin";
-    } else if (tempAdmins.includes(email)) {
-      return "tempadmin";
-    } else {
-      return "user";
-    }
-  };
 
   // Fetch user profile data including profile image URL
   const fetchUserProfile = (userId) => {
@@ -214,6 +176,46 @@ function App() {
     });
   };
 
+  // Fetch current temp admins from Firebase
+  const fetchTempAdmins = () => {
+    const tempAdminsRef = ref(database, "tempadmin");
+    
+    onValue(tempAdminsRef, (snapshot) => {
+      const tempAdminsList = [];
+      if (snapshot.exists()) {
+        snapshot.forEach((childSnapshot) => {
+          const tempAdminEmail = childSnapshot.child("email").val();
+          if (tempAdminEmail) {
+            tempAdminsList.push(tempAdminEmail.toLowerCase());
+          }
+        });
+      }
+      setTempAdmins(tempAdminsList);
+      setLoading(false);
+    }, (error) => {
+      console.error("Error fetching temp admins:", error);
+      setLoading(false);
+    });
+  };
+
+  // Fetch temp admins on initial load
+  useEffect(() => {
+    fetchTempAdmins();
+  }, []);
+
+  // Determine user role based on email
+  const determineUserRole = (email) => {
+    const lowerEmail = email.toLowerCase();
+    if (admins.includes(lowerEmail)) {
+      return "admin";
+    } else if (tempAdmins.includes(lowerEmail)) {
+      return "tempadmin";
+    } else {
+      return "user";
+    }
+  };
+
+  // Auth state listener
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((currentUser) => {
       if (currentUser) {
@@ -224,18 +226,41 @@ function App() {
         // Fetch the user's profile data including profile image
         fetchUserProfile(currentUser.uid);
         
-        // Determine user role and set it
-        const role = determineUserRole(currentUser.email);
-        setUserRole(role);
-        localStorage.setItem("userRole", role);
+        // Always fetch the latest temp admin list when determining role
+        const tempAdminsRef = ref(database, "tempadmin");
         
-        if (location.pathname === "/login" || location.pathname === "/signup") {
-          const routeToNavigate = 
-            role === "admin" ? "/admin" :
-            role === "tempadmin" ? "/tempadmin" : 
-            "/home";
-          navigate(routeToNavigate);
-        }
+        onValue(tempAdminsRef, (snapshot) => {
+          const tempAdminsList = [];
+          if (snapshot.exists()) {
+            snapshot.forEach((childSnapshot) => {
+              const tempAdminEmail = childSnapshot.child("email").val();
+              if (tempAdminEmail) {
+                tempAdminsList.push(tempAdminEmail.toLowerCase());
+              }
+            });
+          }
+          
+          setTempAdmins(tempAdminsList);
+          
+          // Use the fresh temp admin list to determine role
+          const lowerEmail = currentUser.email.toLowerCase();
+          const role = admins.includes(lowerEmail) 
+            ? "admin" 
+            : tempAdminsList.includes(lowerEmail)
+              ? "tempadmin"
+              : "user";
+              
+          setUserRole(role);
+          localStorage.setItem("userRole", role);
+          
+          if (location.pathname === "/login" || location.pathname === "/signup") {
+            const routeToNavigate = 
+              role === "admin" ? "/admin" :
+              role === "tempadmin" ? "/tempadmin" : 
+              "/home";
+            navigate(routeToNavigate);
+          }
+        });
       } else {
         setUser(null);
         setProfileImageUrl(null);
@@ -251,39 +276,58 @@ function App() {
     });
 
     return () => unsubscribe();
-  }, [navigate, location.pathname, tempAdmins]);
+  }, [navigate, location.pathname]);
 
   // Check for stored user data on initial load
   useEffect(() => {
     const storedEmail = localStorage.getItem("userEmail");
     const storedUserId = localStorage.getItem("userId");
-    const storedRole = localStorage.getItem("userRole");
-
+    
     if (storedEmail && storedUserId) {
       setUser({ email: storedEmail, uid: storedUserId });
       
       // Fetch profile image
       fetchUserProfile(storedUserId);
       
-      // Set user role from localStorage or determine it
-      if (storedRole) {
-        setUserRole(storedRole);
-      } else {
-        const role = determineUserRole(storedEmail);
+      // Always fetch the latest temp admin list to determine current role
+      // This ensures if a tempadmin was removed, their role is updated
+      const tempAdminsRef = ref(database, "tempadmin");
+      
+      onValue(tempAdminsRef, (snapshot) => {
+        const tempAdminsList = [];
+        if (snapshot.exists()) {
+          snapshot.forEach((childSnapshot) => {
+            const tempAdminEmail = childSnapshot.child("email").val();
+            if (tempAdminEmail) {
+              tempAdminsList.push(tempAdminEmail.toLowerCase());
+            }
+          });
+        }
+        
+        setTempAdmins(tempAdminsList);
+        
+        // Use the fresh temp admin list to determine role
+        const lowerEmail = storedEmail.toLowerCase();
+        const role = admins.includes(lowerEmail) 
+          ? "admin" 
+          : tempAdminsList.includes(lowerEmail)
+            ? "tempadmin"
+            : "user";
+            
         setUserRole(role);
         localStorage.setItem("userRole", role);
-      }
-      
-      // Navigate to appropriate page if we're on login/signup
-      if (location.pathname === "/login" || location.pathname === "/signup") {
-        const routeToNavigate = 
-          storedRole === "admin" ? "/admin" :
-          storedRole === "tempadmin" ? "/tempadmin" : 
-          "/home";
-        navigate(routeToNavigate);
-      }
+        
+        // Navigate to appropriate page if we're on login/signup
+        if (location.pathname === "/login" || location.pathname === "/signup") {
+          const routeToNavigate = 
+            role === "admin" ? "/admin" :
+            role === "tempadmin" ? "/tempadmin" : 
+            "/home";
+          navigate(routeToNavigate);
+        }
+      });
     }
-  }, [navigate, tempAdmins]);
+  }, [navigate]);
 
   // Function to check if the current route should show navbar
   const shouldShowNavbar = () => {

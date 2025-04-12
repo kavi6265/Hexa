@@ -257,6 +257,7 @@ function App() {
           setUserRole(role);
           localStorage.setItem("userRole", role);
           
+          // Correctly route users based on their role
           if (location.pathname === "/login" || location.pathname === "/signup") {
             const routeToNavigate = 
               role === "admin" ? "/admin" :
@@ -282,10 +283,11 @@ function App() {
     return () => unsubscribe();
   }, [navigate, location.pathname]);
 
-  // Check for stored user data on initial load
+  // Check for stored user data on initial load - FIXED VERSION
   useEffect(() => {
     const storedEmail = localStorage.getItem("userEmail");
     const storedUserId = localStorage.getItem("userId");
+    const storedRole = localStorage.getItem("userRole");
     
     if (storedEmail && storedUserId) {
       setUser({ email: storedEmail, uid: storedUserId });
@@ -294,7 +296,6 @@ function App() {
       fetchUserProfile(storedUserId);
       
       // Always fetch the latest temp admin list to determine current role
-      // This ensures if a tempadmin was removed, their role is updated
       const tempAdminsRef = ref(database, "tempadmin");
       
       onValue(tempAdminsRef, (snapshot) => {
@@ -321,17 +322,35 @@ function App() {
         setUserRole(role);
         localStorage.setItem("userRole", role);
         
-        // Navigate to appropriate page if we're on login/signup
-        if (location.pathname === "/login" || location.pathname === "/signup") {
-          const routeToNavigate = 
-            role === "admin" ? "/admin" :
-            role === "tempadmin" ? "/tempadmin" : 
-            "/home";
-          navigate(routeToNavigate);
+        // Critical fix: navigate based on role when the app first loads
+        if (!["/login", "/signup"].includes(location.pathname)) {
+          // Don't redirect if we're on login or signup
+          
+          // Check if user is on the correct dashboard based on their role
+          const isAdminOnAdminRoute = role === "admin" && location.pathname.startsWith("/admin");
+          const isTempAdminOnTempRoute = role === "tempadmin" && location.pathname.startsWith("/tempadmin");
+          const isUserOnUserRoute = role === "user" && !["/admin", "/tempadmin"].some(prefix => location.pathname.startsWith(prefix));
+          
+          // If not on the correct route for their role, redirect them
+          if (!isAdminOnAdminRoute && !isTempAdminOnTempRoute && !isUserOnUserRoute) {
+            const routeToNavigate = 
+              role === "admin" ? "/admin" :
+              role === "tempadmin" ? "/tempadmin" : 
+              "/home";
+            navigate(routeToNavigate);
+          }
         }
+        
+        setLoading(false);
       });
+    } else {
+      setLoading(false);
+      // No user data in localStorage, ensure we're on login/signup
+      if (!["/login", "/signup"].includes(location.pathname)) {
+        navigate("/login");
+      }
     }
-  }, [navigate]);
+  }, [navigate, location.pathname]);
 
   // Function to check if the current route should show navbar
   const shouldShowNavbar = () => {
@@ -368,13 +387,27 @@ function App() {
       )}
 
       <Routes>
-        <Route path="/" element={user ? <Home /> : <Login />} />
+        <Route 
+          path="/" 
+          element={user ? (
+            userRole === "admin" ? <Navigate to="/admin" /> : 
+            userRole === "tempadmin" ? <Navigate to="/tempadmin" /> : 
+            <Home />
+          ) : <Login />} 
+        />
         <Route path="/login" element={<Login />} />
         <Route path="/product" element={<ProductView />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/order-detail/:id" element={<OrderDetail />} />
-        <Route path="/home" element={user ? <Home /> : <Login />} />
+        <Route 
+          path="/home" 
+          element={user ? (
+            userRole === "admin" ? <Navigate to="/admin" /> : 
+            userRole === "tempadmin" ? <Navigate to="/tempadmin" /> : 
+            <Home />
+          ) : <Login />} 
+        />
         <Route path="/shop" element={user ? <Shop /> : <Login />} />
         <Route path="/success" element={user ? <Success /> : <Login />} />
         <Route path="/edit-profile" element={user ? <EditProfile /> : <Login />} />

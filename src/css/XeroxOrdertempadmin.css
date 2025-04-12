@@ -1,0 +1,191 @@
+/* XeroxOrdertempadmin.css */
+
+.temp-admin-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  /* Search Bar Styling */
+  .search-container {
+    margin-bottom: 20px;
+  }
+  
+  .search-input-wrapper {
+    position: relative;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+  
+  .search-icon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6b7280;
+    font-size: 18px;
+  }
+  
+  .search-input {
+    width: 100%;
+    padding: 14px 14px 14px 45px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 16px;
+    background-color: #f9fafb;
+    transition: all 0.3s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+  
+  .search-input:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 1px 3px rgba(59, 130, 246, 0.2);
+    background-color: #fff;
+  }
+  
+  /* Loading Spinner */
+  .loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 300px;
+  }
+  
+  .spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    border-radius: 50%;
+    border-top: 4px solid #3b82f6;
+    animation: spin 1s linear infinite;
+    margin-bottom: 15px;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
+  /* No Orders Message */
+  .no-orders-message {
+    text-align: center;
+    padding: 50px 0;
+    color: #6b7280;
+    font-size: 18px;
+  }
+  
+  /* Orders List */
+  .orders-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 20px;
+  }
+  
+  /* Order Card */
+  .order-card {
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 16px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: 1px solid #e2e8f0;
+  }
+  
+  .order-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.05);
+    border-color: #cbd5e1;
+  }
+  
+  .order-header {
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #f1f5f9;
+  }
+  
+  .order-id {
+    font-weight: 600;
+    color: #1e293b;
+    font-size: 16px;
+  }
+  
+  .order-details {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  
+  .customer-info {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .customer-name {
+    font-weight: 500;
+    color: #334155;
+    margin-bottom: 4px;
+  }
+  
+  .document-name {
+    color: #64748b;
+    font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 200px;
+  }
+  
+  .price-tag {
+    font-weight: 600;
+    color: #0f766e;
+    font-size: 18px;
+    background-color: #f0fdfa;
+    padding: 6px 12px;
+    border-radius: 20px;
+  }
+  
+  .order-status {
+    display: flex;
+    align-items: center;
+    padding-top: 10px;
+  }
+  
+  .status-indicator {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 8px;
+  }
+  
+  .status-indicator.pending {
+    background-color: #f59e0b;
+  }
+  
+  .status-indicator.processing {
+    background-color: #3b82f6;
+  }
+  
+  .status-indicator.delivered {
+    background-color: #10b981;
+  }
+  
+  .status-text {
+    font-size: 14px;
+    color: #64748b;
+  }
+  
+  /* Responsive Adjustments */
+  @media (max-width: 768px) {
+    .orders-list {
+      grid-template-columns: 1fr;
+    }
+    
+    .order-card {
+      margin-bottom: 15px;
+    }
+  }

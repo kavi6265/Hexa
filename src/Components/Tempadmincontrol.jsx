@@ -9,7 +9,7 @@ function Tempadmincontrol() {
   const [success, setSuccess] = useState('');
   const [admins, setAdmins] = useState([]);
 
-  // Fetch existing admins
+
   const fetchAdmins = async () => {
     try {
       const adminRef = ref(database, 'tempadmin');

@@ -17,10 +17,14 @@ import Contact from "./Components/Contact";
 import OrderedProductpreviewadmin from "./Components/OrderedProductpreviewadmin";
 import Cart from "./Components/Cart";
 import Login from "./Components/Login";
+import XeroxOrderpreviewtempadmin from "./Components/XeroxOrderpreviewtempadmin";
 import EditProfile from "./Components/EditProfile";
 import Signup from "./Components/Signup";
+import OrdersControlatempadmin from "./Components/OrdersControlatempadmin";
 import Success from "./Components/Succes";
 import ProductView from "./Components/ProductView";
+import XeroxOrdertempadmin from "./Components/XeroxOrdertempadmin";
+import OrdersControldmin from "./Components/OrdersControldmin";
 import Admin from "./Components/Admin";
 import Orders from "./Components/Orders";
 
@@ -395,8 +399,8 @@ function App() {
           <Route path="orders" element={<Orders />} />
           <Route path="OrderedProductpreviewadmin/:userId/:orderId" element={<OrderedProductpreviewadmin />} />
           <Route path="tempadmincontrol" element={<Tempadmincontrol />} />
-          <Route path="about" element={<About />} />
-          <Route path="contact" element={<Contact />} />
+          <Route path="OrdersControldmin" element={<OrdersControldmin />} />
+          
         </Route>
 
         {/* Temp Admin Routes */}
@@ -404,9 +408,10 @@ function App() {
           path="/tempadmin"
           element={userRole === "tempadmin" ? <Tempadmin /> : <Navigate to="/login" />}
         >
-          <Route index element={<Navigate to="/tempadmin/orders" replace />} />
-          <Route path="orders" element={<Orders />} />
-          <Route path="tempadmincontrol" element={<Tempadmincontrol />} />
+          <Route index element={<Navigate to="/tempadmin/XeroxOrdertempadmin" replace />} />
+          <Route path="XeroxOrdertempadmin" element={<XeroxOrdertempadmin />} />
+          <Route path="XeroxOrderpreviewtempadmin/:userId/:orderId/:gt" element={<XeroxOrderpreviewtempadmin />} />
+          <Route path="OrdersControlatempadmin" element={<OrdersControlatempadmin />} />
         </Route>
       </Routes>
     </>

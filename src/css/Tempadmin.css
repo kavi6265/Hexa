@@ -3,6 +3,11 @@
     flex-direction: column;
     height: 100vh;
   }
+  .tempadmin-content {
+    padding: 20px;
+    background-color: #f5f7fa;
+    min-height: calc(100vh - 60px);
+  }
   
   .tempadmin-navbar {
     display: flex;
@@ -52,8 +57,4 @@
     color: #28a745;
   }
   
-  .tempadmin-content {
-    flex-grow: 1;
-    padding: 2rem;
-    overflow-y: auto;
-  }
+  

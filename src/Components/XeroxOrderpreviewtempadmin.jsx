@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { getAuth } from 'firebase/auth';
-import { getDatabase, ref, get, update } from 'firebase/database';
+import { getDatabase, ref, get, update, set } from 'firebase/database';
 import '../css/XeroxOrderpreviewtempadmin.css';
-import { useParams } from 'react-router-dom';
-
+import { useParams, useNavigate } from 'react-router-dom';
 
 function XeroxOrderpreviewtempadmin() {
-    const { userId, orderId, gt } = useParams();
+  const { userId, orderId, gt } = useParams();
+  const navigate = useNavigate();
   const [orderDetails, setOrderDetails] = useState({
     orderId: '',
     grandTotal: '',
@@ -15,11 +15,13 @@ function XeroxOrderpreviewtempadmin() {
     paid: false,
     delivered: false,
     address: '',
-    userId: ''
+    userId: '',
+    phoneNumber: ''
   });
   const [files, setFiles] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [updating, setUpdating] = useState(false);
+  const [processingOrder, setProcessingOrder] = useState(false);
+  const [downloadStatus, setDownloadStatus] = useState({}); 
 
   const auth = getAuth();
   const database = getDatabase();
@@ -36,13 +38,11 @@ function XeroxOrderpreviewtempadmin() {
         }
         
         // Get URL parameters
-        
-const grandTotal = gt || '0'; // Default to '0' if not provided
+        const grandTotal = gt || '0'; // Default to '0' if not provided
 
-console.log("OrderID:", orderId);
-console.log("UserID:", userId);
-console.log("Grand Total:", grandTotal);
-
+        console.log("OrderID:", orderId);
+        console.log("UserID:", userId);
+        console.log("Grand Total:", grandTotal);
         
         if (!orderId || !userId) {
           console.error("Missing required parameters. OrderID:", orderId, "UserID:", userId);
@@ -58,22 +58,46 @@ console.log("Grand Total:", grandTotal);
           paid: false,
           delivered: false,
           address: '',
-          userId: userId || ''
+          userId: userId || '',
+          phoneNumber: ''
         });
         
         if (userId && orderId) {
+          // Fetch user's phone number from Firebase
+          const userRef = ref(database, `users/${userId}`);
+          const userSnapshot = await get(userRef);
+          
+          let phoneNumber = 'N/A';
+          if (userSnapshot.exists()) {
+            const userData = userSnapshot.val();
+            phoneNumber = userData.phno || 'N/A';
+          }
+          
           // Fetch order details from Firebase
           const pdfsRef = ref(database, `pdfs/${userId}/${orderId}`);
           const pdfsSnapshot = await get(pdfsRef);
           
-          // Fetch address from uploadscreenshots reference
+          // FIX: Correctly fetch address from two possible locations
+          // First try from uploadscreenshots reference
+          let address = '';
           const uploadScreenshotsRef = ref(database, `uploadscreenshots/${orderId}`);
           const uploadScreenshotsSnapshot = await get(uploadScreenshotsRef);
           
-          let address = '';
           if (uploadScreenshotsSnapshot.exists()) {
             const screenshotData = uploadScreenshotsSnapshot.val();
             address = screenshotData.address || '';
+          }
+          
+          // If address is still empty, try from orders reference as fallback
+          if (!address) {
+            console.log("Fetching address from orders reference");
+            const ordersRef = ref(database, `orders/${userId}/${orderId}`);
+            const ordersSnapshot = await get(ordersRef);
+            
+            if (ordersSnapshot.exists()) {
+              const orderData = ordersSnapshot.val();
+              address = orderData.address || '';
+            }
           }
           
           const filesList = [];
@@ -95,8 +119,9 @@ console.log("Grand Total:", grandTotal);
                   deliveryAmount: fileData.deliveyamt0 || 'Free',
                   paid: fileData.paid || false,
                   delivered: fileData.delivered || false,
-                  address: address,
-                  userId: userId || ''
+                  address: address, // Set the address we fetched
+                  userId: userId || '',
+                  phoneNumber: phoneNumber // Add the phone number
                 });
               }
               
@@ -120,6 +145,13 @@ console.log("Grand Total:", grandTotal);
           }
           
           setFiles(filesList);
+          
+          // Initialize download status for each file
+          const initialDownloadStatus = {};
+          filesList.forEach(file => {
+            initialDownloadStatus[file.id] = 'ready';
+          });
+          setDownloadStatus(initialDownloadStatus);
         }
       } catch (error) {
         console.error('Error fetching order details:', error);
@@ -129,33 +161,67 @@ console.log("Grand Total:", grandTotal);
     };
     
     fetchOrderDetails();
-  }, []);
+  }, [auth, database, orderId, userId, gt]);
   
-  // Function to handle marking order as delivered
-  const handleMarkAsDelivered = async () => {
+  // Function to handle confirming order
+  const handleConfirmOrder = async () => {
     try {
-      setUpdating(true);
+      setProcessingOrder(true);
       const { orderId, userId } = orderDetails;
       
       if (!orderId || !userId) {
         alert('Order information is incomplete');
+        setProcessingOrder(false);
         return;
       }
       
-      // Update the delivered status for all files in this order
-      const updates = {};
+      // Variables to track completion status
+      let dev = false;
+      let up = false;
       
-      // Get all file references in this order
+      // First update the delivered status for all files in this order
       const pdfsRef = ref(database, `pdfs/${userId}/${orderId}`);
       const pdfsSnapshot = await get(pdfsRef);
       
       if (pdfsSnapshot.exists()) {
+        // Process each file in the order
+        const filePromises = [];
+        const copyPromises = [];
+        
         pdfsSnapshot.forEach((fileSnapshot) => {
-          updates[`pdfs/${userId}/${orderId}/${fileSnapshot.key}/delivered`] = true;
+          // 1. Update delivered status in pdfs
+          const updatePromise = update(ref(database, `pdfs/${userId}/${orderId}/${fileSnapshot.key}`), {
+            delivered: true
+          });
+          filePromises.push(updatePromise);
+          
+          // 2. Copy data to orderstempadmin (similar to Android code)
+          const fileData = fileSnapshot.val();
+          if (fileData) {
+            // First set the basic file data
+            const copyPromise = set(ref(database, `orderstempadmin/${orderId}/${fileSnapshot.key}`), fileData)
+              .then(() => {
+                // Then update the delivered status after the copy
+                return update(ref(database, `orderstempadmin/${orderId}/${fileSnapshot.key}`), {
+                  delivered: true
+                });
+              });
+            copyPromises.push(copyPromise);
+          }
         });
         
-        // Perform the update
-        await update(ref(database), updates);
+        // Wait for pdfs updates to complete
+        await Promise.all(filePromises);
+        dev = true;
+        
+        // Wait for copying to orderstempadmin to complete
+        await Promise.all(copyPromises);
+        up = true;
+        
+        // Also update the main order status if it exists
+        await update(ref(database, `orders/${userId}/${orderId}`), {
+          delivered: true
+        });
         
         // Update local state
         setOrderDetails(prev => ({
@@ -163,19 +229,24 @@ console.log("Grand Total:", grandTotal);
           delivered: true
         }));
         
-        alert('Order marked as delivered successfully!');
+        if (dev && up) {
+          alert('Order processed successfully!');
+          // Navigate to main admin page
+          navigate('/admin/dashboard');
+        }
       } else {
         alert('No files found for this order');
       }
     } catch (error) {
-      console.error('Error marking order as delivered:', error);
-      alert('Failed to mark order as delivered: ' + error.message);
+      console.error('Error processing order:', error);
+      alert('Failed to process order: ' + error.message);
     } finally {
-      setUpdating(false);
+      setProcessingOrder(false);
     }
   };
   
-  // Function to handle individual file download
+  // Enhanced function to handle individual file download
+  // Enhanced function to handle individual file download
   const handleDownloadPDF = (file) => {
     const link = document.createElement('a');
     link.href = file.uri;
@@ -184,7 +255,6 @@ console.log("Grand Total:", grandTotal);
     link.click();
     document.body.removeChild(link);
   };
-  
   // Format timestamp to readable date
   const formatDate = (timestamp) => {
     if (!timestamp) return 'N/A';
@@ -192,118 +262,186 @@ console.log("Grand Total:", grandTotal);
     return date.toLocaleString();
   };
   
+  // Get download button text based on status
+  const getDownloadButtonText = (fileId) => {
+    switch(downloadStatus[fileId]) {
+      case 'downloading':
+        return 'Downloading...';
+      case 'completed':
+        return 'Downloaded!';
+      case 'error':
+        return 'Try Again';
+      default:
+        return 'Download PDF';
+    }
+  };
+  
+  // Get download button class based on status
+  const getDownloadButtonClass = (fileId) => {
+    const baseClass = 'download-buttoni';
+    switch(downloadStatus[fileId]) {
+      case 'downloading':
+        return `${baseClass} downloadingi`;
+      case 'completed':
+        return `${baseClass} completedi`;
+      case 'error':
+        return `${baseClass} errori`;
+      default:
+        return baseClass;
+    }
+  };
+  
   if (loading) {
     return (
-      <div className="profile-loading">
-        <div className="spinner"></div>
+      <div className="profile-loadingi">
+        <div className="spinneri"></div>
+        <p className="loading-texti">Loading order details...</p>
       </div>
     );
   }
   
   return (
-    <div className="xerox-preview-container">
-      <div className="preview-header">
-        <h2>Order Details (Admin View)</h2>
+    <div className="xerox-preview-containeri">
+      <div className="preview-headeri">
+        <h2 className="admin-titlei">Order Details</h2>
+        <div className="order-id-displayi">#{orderDetails.orderId}</div>
       </div>
       
-      <div className="order-summary">
-        <div className="order-details-grid">
-          <div className="order-detail-item">
-            <span>Order ID:</span> {orderDetails.orderId}
+      <div className="order-summaryi">
+        <div className="summary-cardi">
+          <div className="order-details-gridi">
+            <div className="order-detail-itemi">
+              <span className="detail-labeli">Customer:</span> 
+              <span className="detail-valuei">{orderDetails.username}</span>
+            </div>
+            <div className="order-detail-itemi">
+              <span className="detail-labeli">Phone:</span> 
+              <span className="detail-valuei">{orderDetails.phoneNumber}</span>
+            </div>
+            <div className="order-detail-itemi">
+              <span className="detail-labeli">Delivery:</span> 
+              <span className="detail-valuei">{orderDetails.deliveryAmount}</span>
+            </div>
+            <div className="order-detail-itemi">
+              <span className="detail-labeli">Status:</span> 
+              <span className={`status-badgei ${orderDetails.delivered ? 'deliveredi' : 'pendingi'}`}>
+                {orderDetails.delivered ? 'Delivered' : 'Pending'}
+              </span>
+            </div>
+            
+            <div className="order-detail-itemi address-itemi">
+              <span className="detail-labeli">Delivery Address:</span> 
+              <span className="detail-valuei addressi">{orderDetails.address || 'Not provided'}</span>
+            </div>
           </div>
-          <div className="order-detail-item">
-            <span>Customer:</span> {orderDetails.username}
+          
+          <div className="admin-actionsi">
+            <button 
+              className="confirm-order-buttoni"
+              onClick={handleConfirmOrder}
+              disabled={processingOrder || orderDetails.delivered}
+            >
+              {processingOrder ? 'Processing...' : orderDetails.delivered ? 'Order Confirmed' : 'Confirm Order'}
+            </button>
           </div>
-          <div className="order-detail-item">
-            <span>Delivery:</span> {orderDetails.deliveryAmount}
-          </div>
-          <div className="order-detail-item">
-            <span>Status:</span> 
-            <span className={`status-badge ${orderDetails.delivered ? 'delivered' : 'pending'}`}>
-              {orderDetails.delivered ? 'Delivered' : 'Pending'}
-            </span>
-          </div>
-          <div className="order-detail-item address-item">
-            <span>Delivery Address:</span> {orderDetails.address || 'Not provided'}
-          </div>
-        </div>
-        
-        {/* Admin Actions Section */}
-        <div className="admin-actions">
-          <button 
-            className={`admin-action-button ${orderDetails.delivered ? 'disabled' : ''}`}
-            onClick={handleMarkAsDelivered}
-            disabled={orderDetails.delivered || updating}
-          >
-            {updating ? 'Updating...' : orderDetails.delivered ? 'Already Delivered' : 'Mark as Delivered'}
-          </button>
         </div>
       </div>
       
       {files.length === 0 ? (
-        <div className="no-files-message">
-          <p>No files found for this order</p>
+        <div className="no-files-messagei">
+          <p className="empty-messagei">No files found for this order</p>
         </div>
       ) : (
-        <div className="files-container">
-          <div className="files-list">
+        <div className="files-containeri">
+          <h3 className="section-titlei">Files ({files.length})</h3>
+          <div className="files-listi">
             {files.map((file, index) => (
-              <div key={file.id || index} className="file-item">
-                <div className="file-info">
-                  <div className="file-name">{file.name}</div>
-                  <div className="upload-time">Uploaded: {formatDate(file.uploadTime)}</div>
-                  
-                  <div className="file-details">
-                    <div className="detail-item">
-                      <span>Pages:</span> {file.pages}
+              <div key={file.id || index} className="file-itemi">
+                <div className="file-headeri">
+                  <div className="file-name-containeri">
+                    <span className="file-iconi">📄</span>
+                    <div className="file-namei">{file.name || 'Unnamed Document'}</div>
+                  </div>
+                  <div className="upload-timei">Uploaded: {formatDate(file.uploadTime)}</div>
+                </div>
+                
+                <div className="file-infoi">
+                  <div className="file-detailsi">
+                    <div className="detail-groupi">
+                      <div className="detail-itemi">
+                        <span className="detail-labeli">Pages:</span> 
+                        <span className="detail-valuei">{file.pages}</span>
+                      </div>
+                      <div className="detail-itemi">
+                        <span className="detail-labeli">Copies:</span> 
+                        <span className="detail-valuei">{file.copies}</span>
+                      </div>
                     </div>
-                    <div className="detail-item">
-                      <span>Copies:</span> {file.copies}
+                    
+                    <div className="detail-groupi">
+                      <div className="detail-itemi">
+                        <span className="detail-labeli">Print:</span> 
+                        <span className="detail-valuei">{file.printType}</span>
+                      </div>
+                      <div className="detail-itemi">
+                        <span className="detail-labeli">Format:</span> 
+                        <span className="detail-valuei">{file.format}</span>
+                      </div>
                     </div>
-                    <div className="detail-item">
-                      <span>Print:</span> {file.printType}
+                    
+                    <div className="detail-groupi">
+                      <div className="detail-itemi">
+                        <span className="detail-labeli">Sheet:</span> 
+                        <span className="detail-valuei">{file.sheet}</span>
+                      </div>
+                      <div className="detail-itemi">
+                        <span className="detail-labeli">Ratio:</span> 
+                        <span className="detail-valuei">{file.ratio}</span>
+                      </div>
                     </div>
-                    <div className="detail-item">
-                      <span>Format:</span> {file.format}
+                    
+                    <div className="detail-groupi">
+                      <div className="detail-itemi">
+                        <span className="detail-labeli">Price/Page:</span> 
+                        <span className="detail-valuei">₹{file.pricePerPage}</span>
+                      </div>
+                      <div className="detail-itemi">
+                        <span className="detail-labeli">Amount:</span> 
+                        <span className="detail-valuei amounti">₹{file.finalAmount}</span>
+                      </div>
                     </div>
-                    <div className="detail-item">
-                      <span>Sheet:</span> {file.sheet}
-                    </div>
-                    <div className="detail-item">
-                      <span>Ratio:</span> {file.ratio}
-                    </div>
-                    <div className="detail-item">
-                      <span>Price/Page:</span> ₹{file.pricePerPage}
-                    </div>
-                    <div className="detail-item">
-                      <span>Amount:</span> ₹{file.finalAmount}
-                    </div>
-                    <div className="detail-item">
-                      <span>Spiral Binding:</span> {file.spiral ? "Yes" : "No"}
+                    
+                    <div className="detail-itemi">
+                      <span className="detail-labeli">Spiral Binding:</span> 
+                      <span className="detail-valuei">{file.spiral ? "Yes" : "No"}</span>
                     </div>
                   </div>
                   
                   {file.notes && (
-                    <div className="file-notes">
-                      <span>Notes:</span> {file.notes}
+                    <div className="file-notesi">
+                      <span className="notes-labeli">Notes:</span> 
+                      <p className="notes-contenti">{file.notes}</p>
                     </div>
                   )}
                 </div>
-                <div className="file-actions">
+                
+                <div className="file-actionsi">
                   <button 
-                    className="view-button"
+                    className={getDownloadButtonClass(file.id)}
                     onClick={() => handleDownloadPDF(file)}
+                    disabled={!file.uri || downloadStatus[file.id] === 'downloading'}
                   >
-                    Download PDF
+                    {getDownloadButtonText(file.id)}
                   </button>
                 </div>
               </div>
             ))}
           </div>
           
-          <div className="bottom-actions">
-            <div className="grand-total">
-              <span>Total Amount:</span> ₹{orderDetails.grandTotal}
+          <div className="bottom-actionsi">
+            <div className="grand-totali">
+              <span className="total-labeli">Total Amount:</span> 
+              <span className="total-valuei">₹{orderDetails.grandTotal}</span>
             </div>
           </div>
         </div>

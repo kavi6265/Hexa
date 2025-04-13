@@ -34,6 +34,7 @@ function XeroxOrderPreview() {
         const urlParams = new URLSearchParams(window.location.search);
         const orderId = urlParams.get('id');
         const grandTotal = urlParams.get('gt');
+        const userid = urlParams.get('userid');
         
         if (!orderId) {
           window.location.href = '/xeroxordersuser';
@@ -50,8 +51,10 @@ function XeroxOrderPreview() {
           address: ''
         });
         
-        const userId = currentUser.uid;
-        const pdfsRef = ref(database, `pdfs/${userId}/${orderId}`);
+        // Determine which user ID to use for fetching PDF data
+        const userIdToUse = userid || currentUser.uid;
+        console.log(userIdToUse)
+        const pdfsRef = ref(database, `pdfs/${userIdToUse}/${orderId}`);
         const pdfsSnapshot = await get(pdfsRef);
         
         // Fetch address from uploadscreenshots reference
@@ -127,7 +130,7 @@ function XeroxOrderPreview() {
     document.body.removeChild(link);
   };
   
-  // Format timestamp to readable date
+ 
   const formatDate = (timestamp) => {
     if (!timestamp) return 'N/A';
     const date = new Date(timestamp);

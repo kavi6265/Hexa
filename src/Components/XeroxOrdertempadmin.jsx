@@ -112,13 +112,13 @@ function XeroxOrdertempadmin() {
   };
 
   return (
-    <div className="temp-admin-container">
-      <div className="search-container">
-        <div className="search-input-wrapper">
-          <i className="search-icon fas fa-search"></i>
+    <div className="temp-admin-containero">
+      <div className="search-containero">
+        <div className="search-input-wrappero">
+          <i className="search-icono fas fa-search"></i>
           <input
             type="text"
-            className="search-input"
+            className="search-inputo"
             placeholder="Search by Order ID or Username"
             value={searchText}
             onChange={handleSearch}
@@ -127,37 +127,37 @@ function XeroxOrdertempadmin() {
       </div>
 
       {loading ? (
-        <div className="loading-container">
-          <div className="spinner"></div>
+        <div className="loading-containero">
+          <div className="spinnero"></div>
           <p>Loading orders...</p>
         </div>
       ) : filteredOrders.length === 0 ? (
-        <div className="no-orders-message">
+        <div className="no-orders-messageo">
           <p>No orders found</p>
         </div>
       ) : (
-        <div className="orders-list">
+        <div className="orders-listo">
           {filteredOrders.map((order) => (
             <div 
               key={order.orderId} 
-              className="order-card"
+              className="order-cardo"
               onClick={() => handleOrderClick(order)}
             >
-              <div className="order-header">
-                <span className="order-id">Order #{order.orderId}</span>
+              <div className="order-headero">
+                <span className="order-ido">Order #{order.orderId}</span>
               </div>
-              <div className="order-details">
-                <div className="customer-info">
-                  <span className="customer-name">{order.username}</span>
-                  <span className="document-name">{order.name}</span>
+              <div className="order-detailso">
+                <div className="customer-infoo">
+                  <span className="customer-nameo">{order.username}</span>
+                  <span className="document-nameo">{order.name}</span>
                 </div>
-                <div className="price-tag">
+                <div className="price-tago">
                   <span>₹ {order.grandTotal}</span>
                 </div>
               </div>
-              <div className="order-status">
-                <span className="status-indicator pending"></span>
-                <span className="status-text">Processing</span>
+              <div className="order-statuso">
+                <span className="status-indicatoro pendingo"></span>
+                <span className="status-texto">Processing</span>
               </div>
             </div>
           ))}

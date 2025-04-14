@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { database } from './firebase';
 import { ref, set, get, remove } from 'firebase/database';
-import '../css/TempAdminControl.css';
+import '../css/Tempadmincontrol.css';
 
 function Tempadmincontrol() {
   const [email, setEmail] = useState('');

@@ -3,7 +3,7 @@ import { database } from './firebase';
 import { ref, set, get, remove } from 'firebase/database';
 import '../css/TempAdminControl.css';
 
-function TempAdminControl() {
+function Tempadmincontrol() {
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
   const [error, setError] = useState('');
@@ -241,4 +241,4 @@ function TempAdminControl() {
   );
 }
 
-export default TempAdminControl;
+export default Tempadmincontrol;

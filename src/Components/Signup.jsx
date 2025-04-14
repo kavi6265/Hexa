@@ -128,8 +128,8 @@ function Signup() {
       const userDetails = {
         name: name,
         email: email,
-        phone: phno,
-        userId: user.uid,
+        phno: phno,
+        userid: user.uid,
         address: isAdmin || isTempAdmin ? "" : address
       };
 

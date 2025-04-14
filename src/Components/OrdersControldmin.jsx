@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { database } from "./firebase"; // Assuming you have Firebase configured
 import { ref, onValue, remove } from "firebase/database";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 import "../css/OrdersControldmin.css";
 
 function OrdersControldmin() {
@@ -11,24 +12,28 @@ function OrdersControldmin() {
   const [totalAmount, setTotalAmount] = useState(0);
   const [selectedItems, setSelectedItems] = useState({});
   const debounceTimeout = useRef(null);
+  const navigate = useNavigate(); // Initialize useNavigate hook
 
   useEffect(() => {
     const ordersRef = ref(database, "orderstempadmin");
-    
+
     onValue(ordersRef, (snapshot) => {
       if (snapshot.exists()) {
         const uniqueOrders = {};
         let grandTotalList = [];
-        
-        snapshot.forEach((userSnapshot) => {
-          userSnapshot.forEach((orderSnapshot) => {
-            const name = orderSnapshot.child("name0").val();
-            const uri = orderSnapshot.child("uri0").val();
-            const grandTotal = orderSnapshot.child("grandTotal0").val();
-            const orderId = orderSnapshot.child("orderid0").val();
-            const username = orderSnapshot.child("username").val();
-            const delivered = orderSnapshot.child("delivered").val();
-            const gt = orderSnapshot.child("grandTotal0").val();
+
+        snapshot.forEach((orderIdSnapshot) => {
+          orderIdSnapshot.forEach((detailsSnapshot) => {
+            const orderData = detailsSnapshot.val();
+            
+            // Check if the property exists in the order data
+            const name = orderData.name0 || '';
+            const uri = orderData.uri0 || '';
+            const grandTotal = orderData.grandTotal0 || '0';
+            const orderId = orderData.orderid0 || '';
+            const username = orderData.username || '';
+            const delivered = orderData.delivered || false;
+            const userId = orderData.userid0 || '';
             
             if (delivered === true && !uniqueOrders[orderId]) {
               uniqueOrders[orderId] = {
@@ -37,18 +42,19 @@ function OrdersControldmin() {
                 grandTotal0: grandTotal,
                 orderid0: orderId,
                 delivered: delivered,
-                username: username
+                username: username,
+                userid0: userId // Store the userid0 property
               };
               
-              grandTotalList.push(parseFloat(gt));
+              grandTotalList.push(parseFloat(grandTotal) || 0);
             }
           });
         });
-        
+
         // Calculate total amount
         const totalAmount = grandTotalList.reduce((acc, curr) => acc + curr, 0);
         setTotalAmount(totalAmount);
-        
+
         // Convert object to array for rendering
         const ordersArray = Object.values(uniqueOrders);
         setOrders(ordersArray);
@@ -64,16 +70,16 @@ function OrdersControldmin() {
 
   const handleSearch = (text) => {
     setSearchText(text);
-    
+
     if (debounceTimeout.current) {
       clearTimeout(debounceTimeout.current);
     }
-    
+
     debounceTimeout.current = setTimeout(() => {
       if (text.trim() === "") {
         setFilteredOrders(orders);
       } else {
-        const filtered = orders.filter(order => 
+        const filtered = orders.filter((order) =>
           order.orderid0.toLowerCase().includes(text.toLowerCase())
         );
         setFilteredOrders(filtered);
@@ -82,43 +88,50 @@ function OrdersControldmin() {
   };
 
   const toggleSelectItem = (orderId) => {
-    setSelectedItems(prev => ({
+    setSelectedItems((prev) => ({
       ...prev,
-      [orderId]: !prev[orderId]
+      [orderId]: !prev[orderId],
     }));
   };
 
   const deleteSelectedItems = () => {
-    const selectedOrderIds = Object.keys(selectedItems).filter(key => selectedItems[key]);
-    
+    const selectedOrderIds = Object.keys(selectedItems).filter(
+      (key) => selectedItems[key]
+    );
+
     if (selectedOrderIds.length === 0) return;
-    
-    selectedOrderIds.forEach(orderId => {
-      const orderRef = ref(db, `orderstempadmin/${orderId}`);
+
+    selectedOrderIds.forEach((orderId) => {
+      const orderRef = ref(database, `orderstempadmin/${orderId}`);
       remove(orderRef)
         .then(() => {
           console.log(`Order ${orderId} deleted successfully`);
           // Update local state to remove deleted items
-          setOrders(prev => prev.filter(order => order.orderid0 !== orderId));
-          setFilteredOrders(prev => prev.filter(order => order.orderid0 !== orderId));
+          setOrders((prev) =>
+            prev.filter((order) => order.orderid0 !== orderId)
+          );
+          setFilteredOrders((prev) =>
+            prev.filter((order) => order.orderid0 !== orderId)
+          );
           // Clear selection state for the deleted item
-          setSelectedItems(prev => {
-            const newSelection = {...prev};
+          setSelectedItems((prev) => {
+            const newSelection = { ...prev };
             delete newSelection[orderId];
             return newSelection;
           });
         })
-        .catch(error => {
+        .catch((error) => {
           console.error(`Error deleting order ${orderId}:`, error);
         });
     });
   };
 
-  const navigateToOrderDetails = (orderId, grandTotal) => {
-    // In a real application, you'd use React Router here
-    console.log(`Navigate to order details for order ${orderId} with total ${grandTotal}`);
-    // Example with React Router:
-    // navigate(`/order-details/${orderId}`, { state: { grandTotal: grandTotal } });
+  const navigateToOrderDetails = (orderId, grandTotal, userId) => {
+    console.log("Navigating with userId:", userId);
+    // Navigate to XeroxOrderPreview with required parameters
+    navigate(
+      `/admin/xeroxorderpreview?id=${orderId}&gt=${grandTotal}&userid=${userId || ''}`
+    );
   };
 
   return (
@@ -148,7 +161,7 @@ function OrdersControldmin() {
       </div>
 
       {loading ? (
-        <div className="loading-spinner">
+        <div className="profile-loading">
           <div className="spinner"></div>
         </div>
       ) : filteredOrders.length === 0 ? (
@@ -156,15 +169,24 @@ function OrdersControldmin() {
       ) : (
         <div className="orders-list">
           {filteredOrders.map((order) => (
-            <div 
-              key={order.orderid0} 
+            <div
+              key={order.orderid0}
               className="order-item"
-              onClick={() => navigateToOrderDetails(order.orderid0, order.grandTotal0)}
+              onClick={() =>
+                navigateToOrderDetails(
+                  order.orderid0,
+                  order.grandTotal0,
+                  order.userid0
+                )
+              }
             >
-              <div className="order-checkbox" onClick={(e) => {
-                e.stopPropagation();
-                toggleSelectItem(order.orderid0);
-              }}>
+              <div
+                className="order-checkbox"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toggleSelectItem(order.orderid0);
+                }}
+              >
                 <input
                   type="checkbox"
                   checked={!!selectedItems[order.orderid0]}

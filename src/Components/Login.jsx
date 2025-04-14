@@ -5,7 +5,7 @@ import {
   signInWithEmailAndPassword,
   sendPasswordResetEmail,
 } from "firebase/auth";
-import { ref, onValue } from "firebase/database";
+import { ref, onValue, get, set, remove } from "firebase/database";
 import "../css/Login.css";
 
 function Login({ onLogin }) {
@@ -46,7 +46,47 @@ function Login({ onLogin }) {
     });
   }, []);
 
-  const handleLogin = (e) => {
+  // Function to migrate user data from users to tempadmin1
+  const migrateUserToTempAdmin = async (userId, userEmail) => {
+    console.log("Attempting to migrate user:", userId, userEmail);
+    try {
+      const userRef = ref(database, `users/${userId}`);
+      const userSnapshot = await get(userRef);
+      
+      if (userSnapshot.exists()) {
+        // Get user data
+        const userData = userSnapshot.val();
+        console.log("User data found:", userData);
+        
+        // Create a new entry in tempadmin1 with the user data
+        const tempAdminRef = ref(database, `tempadmin1/${userId}`);
+        
+        // Make sure email is included in the tempadmin data
+        const tempAdminData = {
+          ...userData,
+          // Ensure email is explicitly included
+        };
+        
+        // Set the data in tempadmin1 node
+        await set(tempAdminRef, tempAdminData);
+        console.log("Data set in tempadmin1:", tempAdminData);
+        
+        // Remove user data from users node
+        await remove(userRef);
+        
+        console.log(`User ${userId} successfully migrated to tempadmin1`);
+        return true;
+      } else {
+        console.log(`User ${userId} not found in users database`);
+        return false;
+      }
+    } catch (error) {
+      console.error("Error migrating user to tempadmin:", error);
+      return false;
+    }
+  };
+
+  const handleLogin = async (e) => {
     e.preventDefault();
 
     if (!email || !password) {
@@ -67,50 +107,74 @@ function Login({ onLogin }) {
     setMessage("Logging in, please wait...");
     setMessageType("loading");
 
-    signInWithEmailAndPassword(auth, email, password)
-      .then(() => {
-        setMessage("Login Successful! Redirecting...");
-        setMessageType("success");
+    try {
+      // Authenticate the user
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+      
+      // Determine user type based on email
+      let userType = "user";
+      
+      // First check if the email is in the admins list
+      if (admins.includes(email.toLowerCase())) {
+        userType = "admin";
+      } 
+      // Then check if the email is in the tempAdmins list
+      else if (tempAdmins.includes(email.toLowerCase())) {
+        userType = "tempadmin";
         
-        // Determine user type based on email
-        let userType = "user";
-        
-        // First check if the email is in the admins list
-        if (admins.includes(email.toLowerCase())) {
-          userType = "admin";
-        } 
-        // Then check if the email is in the tempAdmins list
-        else if (tempAdmins.includes(email.toLowerCase())) {
-          userType = "tempadmin";
-        }
-        
-        // Navigate based on user type
-        setTimeout(() => {
-          // Only call onLogin if it's a function
-          if (typeof onLogin === 'function') {
-            onLogin();
-          }
-          
-          if (userType === "admin") {
-            navigate("/admin");
-          } else if (userType === "tempadmin") {
-            navigate("/tempadmin");
-          } else {
-            navigate("/home");
-          }
-        }, 1000);
-      })
-      .catch((error) => {
-        if (error.code === "auth/user-not-found" || error.code === "auth/invalid-email") {
-          setMessage("Invalid email or password. Please try again.");
-        } else if (error.code === "auth/invalid-credential") {
-          setMessage("Invalid password or Email. Please try again.");
+        // For tempadmin, check if user data exists in users node and migrate if needed
+        const migrationResult = await migrateUserToTempAdmin(user.uid, email);
+        if (migrationResult) {
+          console.log("Successfully migrated user data to tempadmin1");
         } else {
-          setMessage("Login failed. Please try again.");
+          console.log("No migration needed or migration failed");
+          
+          // Check if user already exists in tempadmin1
+          const tempAdminRef = ref(database, `tempadmin1/${user.uid}`);
+          const tempAdminSnapshot = await get(tempAdminRef);
+          
+          // If user doesn't exist in tempadmin1, create a new entry
+          if (!tempAdminSnapshot.exists()) {
+            console.log("Creating new entry in tempadmin1");
+            await set(tempAdminRef, {
+              email: email,
+              uid: user.uid,
+              // Add any other default fields you want for temp admins
+            });
+          }
         }
-        setMessageType("error");
-        setTimeout(() => setMessage(""), 4000);
-      });
+      }
+      
+      setMessage("Login Successful! Redirecting...");
+      setMessageType("success");
+      
+      // Navigate based on user type
+      setTimeout(() => {
+        // Only call onLogin if it's a function
+        if (typeof onLogin === 'function') {
+          onLogin();
+        }
+        
+        if (userType === "admin") {
+          navigate("/admin");
+        } else if (userType === "tempadmin") {
+          navigate("/tempadmin");
+        } else {
+          navigate("/home");
+        }
+      }, 1000);
+    } catch (error) {
+      if (error.code === "auth/user-not-found" || error.code === "auth/invalid-email") {
+        setMessage("Invalid email or password. Please try again.");
+      } else if (error.code === "auth/invalid-credential") {
+        setMessage("Invalid password or Email. Please try again.");
+      } else {
+        setMessage("Login failed. Please try again.");
+      }
+      setMessageType("error");
+      setTimeout(() => setMessage(""), 4000);
+    }
   };
 
   const handleForgotPassword = () => {

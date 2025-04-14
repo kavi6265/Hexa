@@ -13,6 +13,7 @@ import Home from "./Components/Home";
 import Shop from "./Components/Shop";
 import Xerox from "./Components/Xerox";
 import About from "./Components/About";
+import ProductsAllordersadmin from "./Components/ProductsAllordersadmin";
 import ProfileTempadmin from "./Components/ProfileTempadmin";
 import Contact from "./Components/Contact";
 import OrderedProductpreviewadmin from "./Components/OrderedProductpreviewadmin";
@@ -35,6 +36,7 @@ import Checkout from "./Components/Checkout";
 import Profile from "./Components/Profile";
 import ProductOrderUser from "./Components/ProductOrderUser";
 import OrderDetail from "./Components/OrdersDetails";
+import Profileadmin from "./Components/Profileadmin";
 import Tempadmin from "./Components/Tempadmin";
 import ConfirmOrder from "./Components/ConfirmOrder";
 import OrderedProductpreview from "./Components/OrderedProductpreview";
@@ -42,6 +44,7 @@ import Payment from "./Components/Payment";
 import "./css/index.css";
 import XeroxOrderUser from "./Components/XeroxOrdersuser";
 import Xeroxorderpreview from "./Components/Xeroxoderpreview";
+import XeroxAllordersmAdmin from "./Components/XeroxAllordersmAdmin";
 
 // Navbar component
 function Navbar({ user, profileImageUrl }) {
@@ -406,9 +409,8 @@ function App() {
 
   if (loading) {
     return (
-      <div className="loading-container">
-        <div className="loading-spinner"></div>
-        <p>Loading...</p>
+      <div className="profile-loading">
+        <div className="spinner"></div>
       </div>
     );
   }
@@ -503,6 +505,20 @@ function App() {
               path="OrderedProductpreviewadmin/:userId/:orderId"
               element={<OrderedProductpreviewadmin />}
             />
+            <Route
+  path="xeroxallordersadmin"
+  element={<XeroxAllordersAdmin />}
+/>
+<Route
+  path="ProductsAllordersadmin"
+  element={<ProductsAllordersadmin />}
+/>
+<Route
+  path="XeroxAllordersmAdmin"
+  element={<XeroxAllordersmAdmin />}
+/>
+            <Route path="xeroxorderpreview" element={<Xeroxorderpreview />} />
+            <Route path="Profileadmin" element={<Profileadmin />} />
             <Route path="tempadmincontrol" element={<Tempadmincontrol />} />
             <Route path="OrdersControldmin" element={<OrdersControldmin />} />
           </Route>

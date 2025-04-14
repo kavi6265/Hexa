@@ -1,18 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { database } from './firebase';
 import { ref, set, get, remove } from 'firebase/database';
+import '../css/TempAdminControl.css';
 
-function Tempadmincontrol() {
+function TempAdminControl() {
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [admins, setAdmins] = useState([]);
-
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
 
   const fetchAdmins = async () => {
     try {
-      const adminRef = ref(database, 'tempadmin');
+      setIsLoading(true);
+      const adminRef = ref(database, 'tempadmin1');
       const snapshot = await get(adminRef);
       
       if (snapshot.exists()) {
@@ -28,6 +31,8 @@ function Tempadmincontrol() {
     } catch (err) {
       console.error('Error fetching admin details:', err);
       setError('Failed to fetch admin details');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -45,17 +50,24 @@ function Tempadmincontrol() {
     }
 
     try {
+      setIsLoading(true);
+     
+      
       // Sanitize email to be a valid Firebase key
       const sanitizedEmail = email.replace(/\./g, ',');
       
-      // Reference to the tempadmin node in Firebase
-      const adminRef = ref(database, `tempadmin/${sanitizedEmail}`);
-      
-      // Set the data
-      await set(adminRef, {
+      // Create user data object
+      const userData = {
         email: email,
-        name: name
-      });
+        name: name,
+        
+      };
+      
+      
+      
+      // Set data in tempadmin using sanitized email as the key
+      const adminRef2 = ref(database, `tempadmin/${sanitizedEmail}`);
+      await set(adminRef2, userData);
 
       // Clear form and show success message
       setEmail('');
@@ -68,118 +80,155 @@ function Tempadmincontrol() {
     } catch (err) {
       console.error('Error adding admin details:', err);
       setError('Failed to add admin details');
+    } finally {
+      setIsLoading(false);
     }
   };
 
   // Handle admin deletion
-  const handleDeleteAdmin = async (adminId) => {
-    try {
-      const adminRef = ref(database, `tempadmin/${adminId}`);
-      await remove(adminRef);
-      
-      // Refresh the admin list
-      fetchAdmins();
-      setSuccess('Admin deleted successfully!');
-    } catch (err) {
-      console.error('Error deleting admin:', err);
-      setError('Failed to delete admin');
+  const handleDeleteAdmin = async (admin, e) => {
+    e.stopPropagation(); // Prevent navigation when clicking delete button
+    
+    if (window.confirm(`Are you sure you want to remove ${admin.name} as an admin?`)) {
+      try {
+        setIsLoading(true);
+        // First get the complete admin data from tempadmin1
+        const adminRef1 = ref(database, `tempadmin1/${admin.id}`);
+        const snapshot = await get(adminRef1);
+        
+        if (snapshot.exists()) {
+          const userData = snapshot.val();
+          
+          // Format the email to use as a key (replace dots with commas)
+          const emailKey = userData.email.replace(/\./g, ',');
+          
+          // Move the admin to the users node using their userId
+          const userRef = ref(database, `users/${admin.id}`);
+          await set(userRef, userData);
+          
+          // Remove from tempadmin1 using userId
+          await remove(adminRef1);
+          
+          // Also remove from tempadmin using the email key
+          const adminRef2 = ref(database, `tempadmin/${emailKey}`);
+          await remove(adminRef2);
+          
+          // Refresh the admin list
+          fetchAdmins();
+          setSuccess(`${admin.name} removed from admin role successfully`);
+        } else {
+          setError('Failed to find admin data');
+        }
+      } catch (err) {
+        console.error('Error handling admin deletion:', err);
+        setError('Failed to delete admin');
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 
+  // Filter admins based on search query
+  const filteredAdmins = admins.filter(admin => 
+    admin.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    admin.email?.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
-    <div style={{ 
-      maxWidth: '600px', 
-      margin: '0 auto', 
-      padding: '20px', 
-      textAlign: 'center' 
-    }}>
-      <h1>Temp Admin Control</h1>
-      
-      <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: '15px' }}>
-          <input 
-            type="email" 
-            placeholder="Enter Email" 
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            style={{ 
-              width: '100%', 
-              padding: '10px', 
-              marginBottom: '10px' 
-            }}
-            required
-          />
-          
-          <input 
-            type="text" 
-            placeholder="Enter Name" 
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            style={{ 
-              width: '100%', 
-              padding: '10px' 
-            }}
-            required
-          />
-        </div>
-        
+    <div className="admin-container">
+      <div className="admin-header">
         <button 
-          type="submit" 
-          style={{ 
-            padding: '10px 20px', 
-            backgroundColor: '#4CAF50', 
-            color: 'white', 
-            border: 'none', 
-            cursor: 'pointer' 
-          }}
+          onClick={() => window.history.back()}
+          className="back-button"
         >
-          Add Admin
+          Back
         </button>
-      </form>
-
-      {error && (
-        <p style={{ color: 'red', marginTop: '15px' }}>{error}</p>
-      )}
+        <h1 className="page-title">Temp Admin Control</h1>
+        <div className="spacer"></div>
+      </div>
       
-      {success && (
-        <p style={{ color: 'green', marginTop: '15px' }}>{success}</p>
-      )}
+      <div className="admin-form-container">
+        <h2 className="section-title">Add New Admin</h2>
+        <form onSubmit={handleSubmit} className="admin-form">
+          <div className="form-row">
+            <div className="form-group">
+              <label htmlFor="email">Email Address</label>
+              <input 
+                id="email"
+                type="email" 
+                placeholder="Enter Email" 
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
+            
+            <div className="form-group">
+              <label htmlFor="name">Full Name</label>
+              <input 
+                id="name"
+                type="text" 
+                placeholder="Enter Name" 
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+              />
+            </div>
+          </div>
+          
+          <button 
+            type="submit"
+            className="add-button"
+            disabled={isLoading}
+          >
+            {isLoading ? 'Adding...' : 'Add Admin'}
+          </button>
+        </form>
+      </div>
 
-      {/* Admin List Section */}
-      <div style={{ marginTop: '20px' }}>
-        <h2>Current Admins</h2>
-        {admins.length === 0 ? (
-          <p>No admins found</p>
+      {error && <div className="error-message">{error}</div>}
+      {success && <div className="success-message">{success}</div>}
+
+      <div className="search-container">
+        <input
+          type="text"
+          placeholder="Search admins by name or email..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="search-input"
+        />
+      </div>
+
+      <div className="admin-list-container">
+        <h2 className="section-title">Current Admins</h2>
+        {isLoading ? (
+          <div className="loading-indicator">Loading admins...</div>
+        ) : filteredAdmins.length === 0 ? (
+          <p className="no-data-message">No admins found</p>
         ) : (
-          <div>
-            {admins.map((admin) => (
+          <div className="admin-list">
+            {filteredAdmins.map((admin) => (
               <div 
-                key={admin.id} 
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  border: '1px solid #ddd',
-                  padding: '10px',
-                  marginBottom: '10px',
-                  borderRadius: '5px'
-                }}
+                key={admin.id}
+                className="admin-card"
+                onClick={() => window.location.href = `/viewAdminProfile/${admin.id}`}
               >
-                <div>
-                  <strong>Email:</strong> {admin.email}
-                  <br />
-                  <strong>Name:</strong> {admin.name}
+                <div className="admin-info">
+                  <div className="admin-avatar">
+                    <img 
+                      src={admin.profileuri || '/person3.jpg'}
+                      alt={admin.name}
+                      onError={(e) => { e.target.src = '/person3.jpg'; }}
+                    />
+                  </div>
+                  <div className="admin-details">
+                    <div className="admin-name">{admin.name}</div>
+                    <div className="admin-email">{admin.email}</div>
+                  </div>
                 </div>
                 <button
-                  onClick={() => handleDeleteAdmin(admin.id)}
-                  style={{
-                    backgroundColor: '#f44336',
-                    color: 'white',
-                    border: 'none',
-                    padding: '5px 10px',
-                    borderRadius: '3px',
-                    cursor: 'pointer'
-                  }}
+                  onClick={(e) => handleDeleteAdmin(admin, e)}
+                  className="delete-button"
                 >
                   Delete
                 </button>
@@ -192,4 +241,4 @@ function Tempadmincontrol() {
   );
 }
 
-export default Tempadmincontrol;
+export default TempAdminControl;

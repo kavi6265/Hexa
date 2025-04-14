@@ -312,17 +312,17 @@ function OrderedProductpreviewadmin(){
     return (
         <div className="order-details-container">
             <div className="order-details-header">
-                <button className="back-button" onClick={handleBackClick}>
-                    <i className="bx bx-arrow-back"></i>
-                </button>
+                
                 <h1>Order Details</h1>
             </div>
 
             {loading ? (
-                <div className="loading-container">
-                    <div className="loading-spinner"></div>
-                    <p>Loading order details...</p>
-                </div>
+                
+    <div className="profile-loading">
+      <div className="spinner"></div>
+      
+    </div>
+  
             ) : order ? (
                 <div className="order-details-content">
                     <div className="order-summary-card">
@@ -434,9 +434,7 @@ function OrderedProductpreviewadmin(){
                         </div>
                     </div>
                     
-                    <div className="help-section">
-                        <p>Need help with your order? <a href="#" className="contact-link">Contact Customer Support</a></p>
-                    </div>
+                    
                 </div>
             ) : (
                 <div className="order-not-found">

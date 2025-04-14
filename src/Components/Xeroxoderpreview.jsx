@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { getAuth } from 'firebase/auth';
 import { getDatabase, ref, get } from 'firebase/database';
-import '../css/XeroxOrderPreview.css';
+import '../css/Xeroxorderpreview.css';
 
 function Xeroxorderpreview() {
   const [orderDetails, setOrderDetails] = useState({

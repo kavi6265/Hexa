@@ -140,23 +140,23 @@ function Home() {
   return (
     <>
       {showNotification && (
-        <div className="notification-popup">
-          <p>{notificationMessage}</p>
+        <div className="notification-popuphome">
+          <p className="notification-texthome">{notificationMessage}</p>
         </div>
       )}
       
-      <section id="main">
-        <div className="hero-content">
-          <h2 className="fade-in h2" style={{color:"#465b52"}}>Welcome To</h2>
-          <h1 className="slide-in h1">Jasa Essential</h1>
-          <p className="fade-in-delay">Save more with coupons & up to 70% off!</p>
-          <button className="btn pulse" onClick={() => navigate("/shop")}>
-            Shop Now <i className="bx bx-right-arrow-alt"></i>
+      <section id="mainhome" className="section-mainhome">
+        <div className="hero-contenthome">
+          <h2 className="fade-inhome h2home" style={{color:"#465b52"}}>Welcome To</h2>
+          <h1 className="slide-inhome h1home">Jasa Essential</h1>
+          <p className="fade-in-delayhome paragraph-texthome">Save more with coupons & up to 70% off!</p>
+          <button className="btnhome pulsehome" onClick={() => navigate("/shop")}>
+            Shop Now <i className="bx bx-right-arrow-alt icon-arrowhome"></i>
           </button>
         </div>
       </section>
 
-      <section id="feature" className="section-p1">
+      <section id="featurehome" className="section-p1home">
         {[
           { img: "f1.png", text: "Free Shipping", icon: "bx-package" },
           { img: "f2.png", text: "Online Order", icon: "bx-cart" },
@@ -165,26 +165,26 @@ function Home() {
           { img: "f5.png", text: "Happy Sell", icon: "bx-happy-heart-eyes" },
           { img: "f6.png", text: "24/7 Support", icon: "bx-support" },
         ].map((feature, index) => (
-          <div className="fe-box" key={index}>
-            <div className="feature-icon">
-              <i className={`bx ${feature.icon}`}></i>
+          <div className="fe-boxhome" key={index}>
+            <div className="feature-iconhome">
+              <i className={`bx ${feature.icon} icon-featurehome`}></i>
             </div>
-            <img src={feature.img} alt={feature.text} />
-            <h6>{feature.text}</h6>
+            <img className="feature-imagehome" src={feature.img} alt={feature.text} />
+            <h6 className="feature-texthome">{feature.text}</h6>
           </div>
         ))}
       </section>
 
-      <div className="wave-divider">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 100">
+      <div className="wave-dividerhome">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 100" className="wave-svghome">
           <path fill="#e3e6f3" fillOpacity="0.4" d="M0,32L48,48C96,64,192,96,288,96C384,96,480,64,576,48C672,32,768,32,864,48C960,64,1056,96,1152,96C1248,96,1344,64,1392,48L1440,32L1440,0L1392,0C1344,0,1248,0,1152,0C1056,0,960,0,864,0C768,0,672,0,576,0C480,0,384,0,288,0C192,0,96,0,48,0L0,0Z"></path>
         </svg>
       </div>
 
-      <section id="product1" className="section-p1">
-        <h2>Featured Products</h2>
-        <p>Essential Stationery for Every Student</p>
-        <div className="pro-container">
+      <section id="product1home" className="section-p1home">
+        <h2 className="product-headinghome">Featured Products</h2>
+        <p className="product-subheadinghome">Essential Stationery for Every Student</p>
+        <div className="pro-containerhome">
           {[
             {
               img: "casio991.jpg",
@@ -258,24 +258,24 @@ function Home() {
             
             return (
               <div
-                className="pro"
+                className="prohome"
                 key={index}
                 onClick={() => handleProductClick(product)}
               >
-                <div className="product-img-container">
-                  <img className="product-img" src={product.img} alt={product.name} />
-                  {inCart && <div className="in-cart-indicator">In Cart</div>}
+                <div className="product-img-containerhome">
+                  <img className="product-imghome" src={product.img} alt={product.name} />
+                  {inCart && <div className="in-cart-indicatorhome">In Cart</div>}
                 </div>
-                <div className="des">
-                  <span className="brand">{product.brand}</span>
-                  <h5 className="product-name">{product.name}</h5>
-                  <div className="price-cart-container">
-                    <h4 className="price">{product.price}</h4>
+                <div className="deshome">
+                  <span className="brandhome">{product.brand}</span>
+                  <h5 className="product-namehome">{product.name}</h5>
+                  <div className="price-cart-containerhome">
+                    <h4 className="pricehome">{product.price}</h4>
                     <button 
-                      className={`cart-btn ${inCart ? 'in-cart' : ''}`}
+                      className={`cart-btnhome ${inCart ? 'in-carthome' : ''}`}
                       onClick={(e) => addToCart(e, product)}
                     >
-                      <i className={`bx ${inCart ? 'bx-check' : 'bx-cart'}`}></i>
+                      <i className={`bx ${inCart ? 'bx-check' : 'bx-cart'} cart-iconhome`}></i>
                     </button>
                   </div>
                 </div>
@@ -285,70 +285,70 @@ function Home() {
         </div>
       </section>
 
-      <div className="newsletter-section">
-        <div className="newsletter-content">
-          <h3>Subscribe To Our Newsletter</h3>
-          <p>Get updates on new products and special offers</p>
-          <div className="newsletter-form">
-            <input type="email" placeholder="Your email address" />
-            <button className="subscribe-btn">Subscribe</button>
+      <div className="newsletter-sectionhome">
+        <div className="newsletter-contenthome">
+          <h3 className="newsletter-titlehome">Subscribe To Our Newsletter</h3>
+          <p className="newsletter-texthome">Get updates on new products and special offers</p>
+          <div className="newsletter-formhome">
+            <input type="email" className="newsletter-inputhome" placeholder="Your email address" />
+            <button className="subscribe-btnhome">Subscribe</button>
           </div>
         </div>
       </div>
 
-      <footer className="section-p1">
-        <div className="footer-content">
-          <div className="col company-info">
-            <h3>Jasa Essential</h3>
-            <h4>Contact</h4>
-            <p>
-              <i className="bx bx-map"></i>
-              <strong>Address:</strong> 562 Wellington Road, Street 32, San Francisco
+      <footer className="section-p1home footerhome">
+        <div className="footer-contenthome">
+          <div className="colhome company-infohome">
+            <h3 className="footer-titlehome">Jasa Essential</h3>
+            <h4 className="footer-subtitlehome">Contact</h4>
+            <p className="footer-texthome">
+              <i className="bx bx-map footer-iconhome"></i>
+              <strong className="footer-boldhome">Address:</strong> 562 Wellington Road, Street 32, San Francisco
             </p>
-            <p>
-              <i className="bx bx-phone"></i>
-              <strong>Phone:</strong> +01 2222 345 / (+91) 0 123 456 789
+            <p className="footer-texthome">
+              <i className="bx bx-phone footer-iconhome"></i>
+              <strong className="footer-boldhome">Phone:</strong> +01 2222 345 / (+91) 0 123 456 789
             </p>
-            <p>
-              <i className="bx bx-time"></i>
-              <strong>Hours:</strong> 10:00 - 18:00, Mon - Sat
+            <p className="footer-texthome">
+              <i className="bx bx-time footer-iconhome"></i>
+              <strong className="footer-boldhome">Hours:</strong> 10:00 - 18:00, Mon - Sat
             </p>
-            <div className="follow">
-              <h4>Follow Us</h4>
-              <div className="social-icons">
-                <a href="#"><i className="bx bxl-facebook"></i></a>
-                <a href="#"><i className="bx bxl-twitter"></i></a>
-                <a href="#"><i className="bx bxl-instagram"></i></a>
-                <a href="#"><i className="bx bxl-pinterest-alt"></i></a>
-                <a href="#"><i className="bx bxl-youtube"></i></a>
+            <div className="followhome">
+              <h4 className="footer-subtitlehome">Follow Us</h4>
+              <div className="social-iconshome">
+                <a href="#" className="social-linkhome"><i className="bx bxl-facebook social-iconhome"></i></a>
+                <a href="#" className="social-linkhome"><i className="bx bxl-twitter social-iconhome"></i></a>
+                <a href="#" className="social-linkhome"><i className="bx bxl-instagram social-iconhome"></i></a>
+                <a href="#" className="social-linkhome"><i className="bx bxl-pinterest-alt social-iconhome"></i></a>
+                <a href="#" className="social-linkhome"><i className="bx bxl-youtube social-iconhome"></i></a>
               </div>
             </div>
           </div>
 
-          <div className="col">
-            <h4>About</h4>
-            <ul>
-              <li><a href="#">About us</a></li>
-              <li><a href="#">Delivery Information</a></li>
-              <li><a href="#">Privacy Policy</a></li>
-              <li><a href="#">Terms & Conditions</a></li>
-              <li><a href="#">Contact Us</a></li>
+          <div className="colhome">
+            <h4 className="footer-subtitlehome">About</h4>
+            <ul className="footer-listhome">
+              <li className="footer-list-itemhome"><a href="#" className="footer-linkhome">About us</a></li>
+              <li className="footer-list-itemhome"><a href="#" className="footer-linkhome">Delivery Information</a></li>
+              <li className="footer-list-itemhome"><a href="#" className="footer-linkhome">Privacy Policy</a></li>
+              <li className="footer-list-itemhome"><a href="#" className="footer-linkhome">Terms & Conditions</a></li>
+              <li className="footer-list-itemhome"><a href="#" className="footer-linkhome">Contact Us</a></li>
             </ul>
           </div>
 
-          <div className="col">
-            <h4>My Account</h4>
-            <ul>
-              <li><a href="#">Sign In</a></li>
-              <li><a href="#">View Cart</a></li>
-              <li><a href="#">My Wishlist</a></li>
-              <li><a href="#">Track My Order</a></li>
-              <li><a href="#">Help</a></li>
+          <div className="colhome">
+            <h4 className="footer-subtitlehome">My Account</h4>
+            <ul className="footer-listhome">
+              <li className="footer-list-itemhome"><a href="#" className="footer-linkhome">Sign In</a></li>
+              <li className="footer-list-itemhome"><a href="#" className="footer-linkhome">View Cart</a></li>
+              <li className="footer-list-itemhome"><a href="#" className="footer-linkhome">My Wishlist</a></li>
+              <li className="footer-list-itemhome"><a href="#" className="footer-linkhome">Track My Order</a></li>
+              <li className="footer-list-itemhome"><a href="#" className="footer-linkhome">Help</a></li>
             </ul>
           </div>
         </div>
-        <div className="copyright">
-          <p>© 2025 Jasa Essential - All Rights Reserved</p>
+        <div className="copyrighthome">
+          <p className="copyright-texthome">© 2025 Jasa Essential - All Rights Reserved</p>
         </div>
       </footer>
     </>

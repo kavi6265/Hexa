@@ -229,8 +229,8 @@ function Xerox() {
 
   // Empty state UI when no files are selected
   const renderEmptyState = () => (
-    <div className="empty-state">
-      <div className="empty-state-icon">
+    <div className="empty-statexerox">
+      <div className="empty-state-iconxerox">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="64" height="64" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
           <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
           <polyline points="14 2 14 8 20 8"></polyline>
@@ -238,109 +238,111 @@ function Xerox() {
           <line x1="9" y1="15" x2="15" y2="15"></line>
         </svg>
       </div>
-      <h2 className="empty-state-title">Ready to print your documents?</h2>
-      <p className="empty-state-text">
+      <h2 className="empty-state-titlexerox">Ready to print your documents?</h2>
+      <p className="empty-state-textxerox">
         Upload your PDFs or images and customize your printing options.
         We offer various paper types, color options, and binding services.
       </p>
-      <div className="features-grid">
-        <div className="feature">
-          <div className="feature-icon">📄</div>
-          <div className="feature-text">Multiple paper types</div>
+      <div className="features-gridxerox">
+        <div className="featurexerox">
+          <div className="feature-iconxerox">📄</div>
+          <div className="feature-textxerox">Multiple paper types</div>
         </div>
-        <div className="feature">
-          <div className="feature-icon">🖨️</div>
-          <div className="feature-text">B&W or color printing</div>
+        <div className="featurexerox">
+          <div className="feature-iconxerox">🖨️</div>
+          <div className="feature-textxerox">B&W or color printing</div>
         </div>
-        <div className="feature">
-          <div className="feature-icon">📎</div>
-          <div className="feature-text">Spiral binding</div>
+        <div className="featurexerox">
+          <div className="feature-iconxerox">📎</div>
+          <div className="feature-textxerox">Spiral binding</div>
         </div>
-        <div className="feature">
-          <div className="feature-icon">💰</div>
-          <div className="feature-text">Affordable pricing</div>
+        <div className="featurexerox">
+          <div className="feature-iconxerox">💰</div>
+          <div className="feature-textxerox">Affordable pricing</div>
         </div>
       </div>
-      <div className="pricing-summary">
-        <h3 style={{
+      <div className="pricing-summaryxerox">
+        <h3 className="pricing-headingxerox" style={{
           textAlign:"center",
           display:"flex",
           justifyContent:"center",
           alignItems:"center",
           
         }}>Price List</h3>
-        <div className="price-list">
-          <div className="price-list-item">
-            <span>A4 B&W (Single Side)</span>
-            <span>₹1.30 per page</span>
+        <div className="price-listxerox">
+          <div className="price-list-itemxerox">
+            <span className="price-item-labelxerox">A4 B&W (Single Side)</span>
+            <span className="price-item-valuexerox">₹1.30 per page</span>
           </div>
-          <div className="price-list-item">
-            <span>A4 B&W (Double Side)</span>
-            <span>₹0.75 per page</span>
+          <div className="price-list-itemxerox">
+            <span className="price-item-labelxerox">A4 B&W (Double Side)</span>
+            <span className="price-item-valuexerox">₹0.75 per page</span>
           </div>
-          <div className="price-list-item">
-            <span>A4 Color</span>
-            <span>₹10.00 per page</span>
+          <div className="price-list-itemxerox">
+            <span className="price-item-labelxerox">A4 Color</span>
+            <span className="price-item-valuexerox">₹10.00 per page</span>
           </div>
-          <div className="price-list-item">
-            <span>Bonafide/OHP Paper</span>
-            <span>₹15.00 per page</span>
+          <div className="price-list-itemxerox">
+            <span className="price-item-labelxerox">Bonafide/OHP Paper</span>
+            <span className="price-item-valuexerox">₹15.00 per page</span>
           </div>
-          <div className="price-list-item">
-            <span>Spiral Binding</span>
-            <span>₹20.00 per copy</span>
+          <div className="price-list-itemxerox">
+            <span className="price-item-labelxerox">Spiral Binding</span>
+            <span className="price-item-valuexerox">₹20.00 per copy</span>
           </div>
         </div>
       </div>
-      <label className="file-upload-button">
+      <label className="file-upload-buttonxerox">
         <input
           type="file"
           accept=".pdf,.jpg,.png"
           multiple
           onChange={handleFileUpload}
+          className="file-upload-inputxerox"
         />
-        <span>Upload Files to Begin</span>
+        <span className="upload-button-textxerox">Upload Files to Begin</span>
       </label>
     </div>
   );
 
   return (
-    <div className="xerox-container">
-      <h1 className="xerox-title">Xerox Printing Service</h1>
+    <div className="xerox-containerxerox">
+      <h1 className="xerox-titlexerox">Xerox Printing Service</h1>
 
       {files.length === 0 ? (
         // Show empty state when no files are uploaded
         renderEmptyState()
       ) : (
         // Show file upload button when files exist
-        <label className="file-upload">
+        <label className="file-uploadxerox">
           <input
             type="file"
             accept=".pdf,.jpg,.png"
             multiple
             onChange={handleFileUpload}
+            className="file-upload-inputxerox"
           />
-          <span className="file-label">Click to upload more files</span>
+          <span className="file-labelxerox">Click to upload more files</span>
         </label>
       )}
 
       {files.map((fileData, index) => (
-        <div key={index} className="file-container">
-          <div className="file-header">
-            <h3>{fileData.file.name} ({fileData.totalPages} pages)</h3>
+        <div key={index} className="file-containerxerox">
+          <div className="file-headerxerox">
+            <h3 className="file-header-titlexerox">{fileData.file.name} ({fileData.totalPages} pages)</h3>
             <button 
-              className="remove-file-button"
+              className="remove-file-buttonxerox"
               onClick={() => removeFile(index)}
             >
               ✕
             </button>
           </div>
 
-          <div className="options-grid">
-            <div className="select-container">
-              <label className="select-label">Paper Type</label>
+          <div className="options-gridxerox">
+            <div className="select-containerxerox">
+              <label className="select-labelxerox">Paper Type</label>
               <select
-                className="select-input"
+                className="select-inputxerox"
                 value={fileData.paperType}
                 onChange={(e) => handleChange(index, "paperType", e.target.value)}
               >
@@ -349,10 +351,10 @@ function Xerox() {
               </select>
             </div>
 
-            <div className="select-container">
-              <label className="select-label">Color</label>
+            <div className="select-containerxerox">
+              <label className="select-labelxerox">Color</label>
               <select
-                className="select-input"
+                className="select-inputxerox"
                 value={fileData.printType}
                 onChange={(e) => handleChange(index, "printType", e.target.value)}
               >
@@ -361,10 +363,10 @@ function Xerox() {
               </select>
             </div>
 
-            <div className="select-container">
-              <label className="select-label">Format</label>
+            <div className="select-containerxerox">
+              <label className="select-labelxerox">Format</label>
               <select
-                className="select-input"
+                className="select-inputxerox"
                 value={fileData.format}
                 onChange={(e) => handleChange(index, "format", e.target.value)}
               >
@@ -373,10 +375,10 @@ function Xerox() {
               </select>
             </div>
 
-            <div className="select-container">
-              <label className="select-label">Print Ratio</label>
+            <div className="select-containerxerox">
+              <label className="select-labelxerox">Print Ratio</label>
               <select
-                className="select-input"
+                className="select-inputxerox"
                 value={fileData.ratio}
                 onChange={(e) => handleChange(index, "ratio", e.target.value)}
               >
@@ -385,55 +387,56 @@ function Xerox() {
               </select>
             </div>
 
-            <div className="select-container">
-              <label className="select-label">Quantity</label>
+            <div className="select-containerxerox">
+              <label className="select-labelxerox">Quantity</label>
               <input
                 type="number"
-                className="select-input"
+                className="select-inputxerox"
                 min="1"
                 value={fileData.quantity}
                 onChange={(e) => handleChange(index, "quantity", parseInt(e.target.value) || 1)}
               />
             </div>
 
-            <div className="checkbox-container">
+            <div className="checkbox-containerxerox">
               <input
                 type="checkbox"
+                className="checkbox-inputxerox"
                 checked={fileData.spiralBinding}
                 onChange={() => handleChange(index, "spiralBinding", !fileData.spiralBinding)}
               />
-              <label>Include Spiral Binding (₹20)</label>
+              <label className="checkbox-labelxerox">Include Spiral Binding (₹20)</label>
             </div>
           </div>
 
-          <div className="price-info">
-            <div className="price-item">
-              <span className="price-label">Price per page:</span>
-              <span className="price-value">₹{fileData.perPagePrice.toFixed(2)}</span>
+          <div className="price-infoxerox">
+            <div className="price-itemxerox">
+              <span className="price-labelxerox">Price per page:</span>
+              <span className="price-valuexerox">₹{fileData.perPagePrice.toFixed(2)}</span>
             </div>
-            <div className="price-item">
-              <span className="price-label">Amount per copy:</span>
-              <span className="price-value">₹{fileData.amountPerQuantity.toFixed(2)}</span>
+            <div className="price-itemxerox">
+              <span className="price-labelxerox">Amount per copy:</span>
+              <span className="price-valuexerox">₹{fileData.amountPerQuantity.toFixed(2)}</span>
             </div>
-            <div className="price-item total">
-              <span className="price-label">Final amount:</span>
-              <span className="price-value">₹{fileData.finalAmount.toFixed(2)}</span>
+            <div className="price-itemxerox totalxerox">
+              <span className="price-labelxerox">Final amount:</span>
+              <span className="price-valuexerox">₹{fileData.finalAmount.toFixed(2)}</span>
             </div>
           </div>
         </div>
       ))}
 
       {files.length > 0 && (
-        <div className="checkout-section">
-          <div className="grand-total-container">
-            <div className="grand-total">
-              <span className="grand-total-label">Grand Total:</span>
-              <span className="grand-total-value">₹{totalCost.toFixed(2)}</span>
+        <div className="checkout-sectionxerox">
+          <div className="grand-total-containerxerox">
+            <div className="grand-totalxerox">
+              <span className="grand-total-labelxerox">Grand Total:</span>
+              <span className="grand-total-valuexerox">₹{totalCost.toFixed(2)}</span>
             </div>
           </div>
           
           <button 
-            className="checkout-button"
+            className="checkout-buttonxerox"
             onClick={handleCheckout}
           >
             Proceed to Checkout

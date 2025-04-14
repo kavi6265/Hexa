@@ -1,5 +1,5 @@
 /* Container Styling */
-.signupbox {
+.signupboxsignup {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -10,7 +10,7 @@
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-.signupbox1 {
+.signupbox1signup {
   background-color: white;
   padding: 40px 30px;
   border-radius: 16px;
@@ -21,11 +21,11 @@
   transition: transform 0.3s ease;
 }
 
-.signupbox1:hover {
+.signupbox1signup:hover {
   transform: translateY(-5px);
 }
 
-.signuph1 {
+.signuph1signup {
   color: #5271ff;
   margin-bottom: 25px;
   font-weight: 700;
@@ -34,7 +34,7 @@
   padding-bottom: 12px;
 }
 
-.signuph1::after {
+.signuph1signup::after {
   content: '';
   position: absolute;
   left: 50%;
@@ -47,7 +47,7 @@
 }
 
 /* Input Field Styling */
-.signupinput {
+.signupinputsignup {
   display: block;
   width: 100%;
   padding: 14px 16px;
@@ -60,18 +60,18 @@
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
 }
 
-.signupinput:focus {
+.signupinputsignup:focus {
   border-color: #5271ff;
   box-shadow: 0 0 0 2px rgba(82, 113, 255, 0.2);
   outline: none;
 }
 
-.signupinput::placeholder {
+.signupinputsignup::placeholder {
   color: #aaa;
 }
 
 /* Button Styling */
-.signupbutton {
+.signupbuttonsignup {
   width: 100%;
   padding: 14px;
   background: linear-gradient(90deg, #5271ff, #6e8efb);
@@ -86,24 +86,24 @@
   box-shadow: 0 4px 10px rgba(82, 113, 255, 0.3);
 }
 
-.signupbutton:hover {
+.signupbuttonsignup:hover {
   background: linear-gradient(90deg, #4260f5, #5b7ef7);
   box-shadow: 0 6px 12px rgba(82, 113, 255, 0.4);
   transform: translateY(-2px);
 }
 
-.signupbutton:active {
+.signupbuttonsignup:active {
   transform: translateY(1px);
 }
 
 /* Login Link Styling */
-.login-link {
+.login-linksignup {
   margin-top: 20px;
   font-size: 15px;
   color: #666;
 }
 
-.login-link a {
+.loginlinktextsignup {
   color: #5271ff;
   text-decoration: none;
   font-weight: 600;
@@ -111,30 +111,30 @@
   transition: color 0.2s;
 }
 
-.login-link a:hover {
+.loginlinktextsignup:hover {
   color: #3d5af0;
   text-decoration: underline;
 }
 
 /* Message Styling */
-.signupmessage {
+.signupmessagesignup {
   margin-top: 15px;
   font-size: 14px;
   padding: 10px;
   border-radius: 8px;
-  animation: fadeIn 0.5s ease-out;
+  animation: fadeInsignup 0.5s ease-out;
   font-weight: 500;
   color: #fff;
   background: linear-gradient(90deg, #28a745, #20c997);
   box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
 }
 
-.signupmessage.error {
+.signupmessagesignup.errorsignup {
   background: linear-gradient(90deg, #ff4d4d, #ff6b6b);
   color: #fff;
 }
 
-@keyframes fadeIn {
+@keyframes fadeInsignup {
   from {
     opacity: 0;
   }
@@ -144,8 +144,8 @@
 }
 
 /* Show Password and Terms Checkboxes */
-.show-password-container,
-.terms-container {
+.show-password-containersignup,
+.terms-containersignup {
   display: flex;
   align-items: center;
   justify-content: flex-start;
@@ -157,8 +157,7 @@
   color: #555;
 }
 
-.show-password-container input[type="checkbox"],
-.terms-container input[type="checkbox"] {
+.checkboxinputsignup {
   appearance: none;
   -webkit-appearance: none;
   width: 18px;
@@ -172,14 +171,12 @@
   transition: background 0.2s, border 0.2s;
 }
 
-.show-password-container input[type="checkbox"]:checked,
-.terms-container input[type="checkbox"]:checked {
+.checkboxinputsignup:checked {
   background-color: #5271ff;
   border-color: #5271ff;
 }
 
-.show-password-container input[type="checkbox"]:checked::before,
-.terms-container input[type="checkbox"]:checked::before {
+.checkboxinputsignup:checked::before {
   content: "";
   position: absolute;
   top: 2px;
@@ -191,28 +188,28 @@
   transform: rotate(45deg);
 }
 
-.show-password-container:hover,
-.terms-container:hover {
+.show-password-containersignup:hover,
+.terms-containersignup:hover {
   color: #5271ff;
 }
 
-.show-password-container label,
-.terms-container label {
+.checkboxlabelsignup,
+.termslabelsignup {
   cursor: pointer;
 }
 
-.terms-container label {
+.termslabelsignup {
   color: #5271ff;
   text-decoration: underline;
   transition: color 0.2s;
 }
 
-.terms-container label:hover {
+.termslabelsignup:hover {
   color: #3d5af0;
 }
 
 /* Loading State */
-.loading {
+.loadingsignup {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -222,7 +219,7 @@
   position: relative;
 }
 
-.loading::after {
+.loadingsignup::after {
   content: "";
   width: 40px;
   height: 40px;
@@ -230,10 +227,10 @@
   border-radius: 50%;
   border-top-color: #5271ff;
   position: absolute;
-  animation: spin 1s linear infinite;
+  animation: spinsignup 1s linear infinite;
 }
 
-@keyframes spin {
+@keyframes spinsignup {
   to {
     transform: rotate(360deg);
   }
@@ -241,15 +238,15 @@
 
 /* Responsive Adjustments */
 @media (max-width: 480px) {
-  .signupbox1 {
+  .signupbox1signup {
     padding: 30px 20px;
   }
   
-  .signuph1 {
+  .signuph1signup {
     font-size: 24px;
   }
   
-  .signupinput {
+  .signupinputsignup {
     padding: 12px 14px;
   }
 }

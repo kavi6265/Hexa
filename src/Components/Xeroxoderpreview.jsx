@@ -3,7 +3,7 @@ import { getAuth } from 'firebase/auth';
 import { getDatabase, ref, get } from 'firebase/database';
 import '../css/XeroxOrderPreview.css';
 
-function XeroxOrderPreview() {
+function Xeroxorderpreview() {
   const [orderDetails, setOrderDetails] = useState({
     orderId: '',
     grandTotal: '',
@@ -246,4 +246,4 @@ function XeroxOrderPreview() {
   );
 }
 
-export default XeroxOrderPreview;
+export default Xeroxorderpreview;

@@ -43,7 +43,7 @@ import OrderedProductpreview from "./Components/OrderedProductpreview";
 import Payment from "./Components/Payment";
 import "./css/index.css";
 import XeroxOrderUser from "./Components/XeroxOrdersuser";
-import Xeroxorderpreview from "./Components/Xeroxoderpreview";
+import Xeroxorderpreview from "./Components/Xeroxoderpreview" 
 import XeroxAllordersmAdmin from "./Components/XeroxAllordersmAdmin";
 
 // Navbar component

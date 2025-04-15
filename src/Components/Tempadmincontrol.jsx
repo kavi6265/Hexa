@@ -137,12 +137,7 @@ function Tempadmincontrol() {
   return (
     <div className="admin-container">
       <div className="admin-header">
-        <button 
-          onClick={() => window.history.back()}
-          className="back-button"
-        >
-          Back
-        </button>
+        
         <h1 className="page-title">Temp Admin Control</h1>
         <div className="spacer"></div>
       </div>

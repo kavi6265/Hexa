@@ -650,14 +650,17 @@ const Shop = () => {
           </div>
         </div>
         
-        <div className="footer-bottom">
+        <div className="footer-bottom" style={{display:"block"}}>
           <p>&copy; 2025 Jasa Essential. All Rights Reserved.</p>
-          <div className="payment-methods">
+          {/* <div className="payment-methods">
             <i className="bx bxl-visa"></i>
             <i className="bx bxl-mastercard"></i>
             <i className="bx bxl-paypal"></i>
             <i className="bx bxl-google-pay"></i>
-          </div>
+          </div> */}
+          <div className="footer-content">
+        <p className="copyright1" style={{flexDirection:"row"}}>Developed by <a href="https://rapcodetechsolutions.netlify.app/" className="develop-aa"><img src="\public\Rapcode.png" style={{width:"20px",height:"20px",display:"flex",margin:"auto",flexDirection:"row", marginLeft:"10px"}} alt="RapCode Logo"></img>RapCode Tech Solutions</a></p>
+      </div>
         </div>
       </footer>
 

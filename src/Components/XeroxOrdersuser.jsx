@@ -115,9 +115,9 @@ function XeroxOrderUser() {
           placeholder="Search order by ID..."
           value={searchText}
           onChange={(e) => setSearchText(e.target.value)}
-          className="search-input"
+          className="search-input5"
         />
-        <span className="search-icon">🔍</span>
+        
       </div>
       
       {filteredOrders.length === 0 ? (

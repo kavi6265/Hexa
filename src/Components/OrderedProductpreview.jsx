@@ -260,9 +260,7 @@ function OrderedProductpreview() {
   return (
     <div className="order-details-container">
       <div className="order-details-header">
-        <button className="back-button" onClick={handleBackClick}>
-          <i className="bx bx-arrow-back"></i>
-        </button>
+        
         <h1>Order Details</h1>
       </div>
 
@@ -348,7 +346,7 @@ function OrderedProductpreview() {
             </div>
           </div>
 
-          <div className="payment-summary-section">
+          <div className="payment-summary-section1">
             <h3><i className="bx bx-credit-card"></i> Payment Summary</h3>
             <div className="payment-details">
               <div className="payment-row">
@@ -370,9 +368,7 @@ function OrderedProductpreview() {
             </div>
           </div>
           
-          <div className="help-section">
-            <p>Need help with your order? <a href="#" className="contact-link">Contact Customer Support</a></p>
-          </div>
+          
         </div>
       ) : (
         <div className="order-not-found">

@@ -288,7 +288,7 @@
   }
   
   .order-items-section h3,
-  .payment-summary-section h3 {
+  .payment-summary-section1 h3 {
     font-size: 1.3rem;
     font-weight: 600;
     margin-bottom: 20px;
@@ -299,7 +299,7 @@
     align-items: center;
   }
   
-  .payment-summary-section h3 i {
+  .payment-summary-section1 h3 i {
     margin-right: 10px;
     color: #6771e6;
   }

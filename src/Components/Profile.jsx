@@ -9,6 +9,7 @@ function Profile() {
   const user = auth.currentUser;
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
   useEffect(() => {
     if (!user) {
@@ -38,28 +39,33 @@ function Profile() {
     return () => unsubscribe();
   }, [user, navigate]);
 
-  const handleLogout = () => {
-    const confirmLogout = window.confirm("Are you sure you want to logout?");
-    if (confirmLogout) {
-      auth.signOut()
-        .then(() => {
-          localStorage.removeItem('cart');
-          localStorage.removeItem("userEmail");
-    localStorage.removeItem("userId");
-    localStorage.removeItem("userRole");
-    
-    // Reset all user-related state
-    setUser(null);
-    setProfileImageUrl(null);
-    setUserRole("user");
-    
-    // Navigate to login page
-    navigate("/login");
-        })
-        .catch((error) => {
-          console.error("Error logging out:", error);
-        });
-    }
+  const handleLogoutClick = () => {
+    setShowLogoutConfirm(true);
+  };
+
+  const handleConfirmLogout = () => {
+    auth.signOut()
+      .then(() => {
+        localStorage.removeItem('cart');
+        localStorage.removeItem("userEmail");
+        localStorage.removeItem("userId");
+        localStorage.removeItem("userRole");
+        
+        // Reset all user-related state (note: you need to define these functions in your actual code)
+        // setUser(null);
+        // setProfileImageUrl(null);
+        // setUserRole("user");
+        
+        // Navigate to login page
+        navigate("/login");
+      })
+      .catch((error) => {
+        console.error("Error logging out:", error);
+      });
+  };
+
+  const handleCancelLogout = () => {
+    setShowLogoutConfirm(false);
   };
 
   if (loading) {
@@ -123,12 +129,36 @@ function Profile() {
             <span>Stationary Orders</span>
           </button>
           
-          <button onClick={handleLogout} className="action-button logout">
+          <button onClick={handleLogoutClick} className="action-button logout">
             <span className="action-icon">🚪</span>
             <span>Logout</span>
           </button>
         </div>
       </div>
+
+      {/* Custom Logout Confirmation Dialog */}
+      {showLogoutConfirm && (
+        <div className="logout-confirm-overlay">
+          <div className="logout-confirm-dialog">
+            <h3>Confirm Logout</h3>
+            <p>Are you sure you want to logout?</p>
+            <div className="logout-confirm-buttons">
+              <button 
+                className="logout-cancel-btn" 
+                onClick={handleCancelLogout}
+              >
+                Cancel
+              </button>
+              <button 
+                className="logout-confirm-btn" 
+                onClick={handleConfirmLogout}
+              >
+                Yes, Logout
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

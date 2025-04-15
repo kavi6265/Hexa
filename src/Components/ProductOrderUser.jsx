@@ -241,11 +241,8 @@ function ProductOrderUser() {
 
   return (
     <div className="orders-container">
-      <div className="orders-header">
-        <button className="back-button" onClick={() => window.history.back()}>
-          <i className="bx bx-arrow-back"></i>
-        </button>
-        <h1>My Orders</h1>
+      <div className="orders-header9">
+        <h1 className="my">My Orders</h1>
       </div>
 
       {loading ? (
@@ -271,7 +268,7 @@ function ProductOrderUser() {
                   <span className="order-id">Order #{order.orderId.substring(0, 8)}</span>
                   <span className="order-date">{formatDate(order.orderTimestamp)}</span>
                 </div>
-                <div className="order-status">
+                <div className="order-status1">
                   {order.delivered ? (
                     <span className="status delivered">Delivered</span>
                   ) : order.ordered ? (
@@ -310,7 +307,7 @@ function ProductOrderUser() {
                 <div className="order-summary">
                   <div className="total-amount">
                     <span>Total Amount:</span>
-                    <span className="amount">₹{order.orderTotal}</span>
+                    <span className="amount4">₹{order.orderTotal}</span>
                   </div>
                   <button className="track-order-btn">
                     Track Order

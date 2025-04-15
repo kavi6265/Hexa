@@ -172,7 +172,7 @@ const EditProfile = () => {
             <img 
               src={imagePreview} 
               alt="Profile" 
-              className="profile-image"
+              className="profile-image1"
             />
             <div className="change-photo-overlay">
               <span>Change Photo</span>

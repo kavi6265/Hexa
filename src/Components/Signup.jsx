@@ -157,15 +157,15 @@ function Signup() {
   };
 
   if (loading) {
-    return <div className="loadingsignup">Loading...</div>;
+    return <div className="loadingsignupt">Loading...</div>;
   }
 
   return (
-    <div className="signupboxsignup">
-      <form className="signupbox1signup" onSubmit={handleSignup}>
-        <h1 className="signuph1signup">Signup</h1>
+    <div className="signupboxsignupt">
+      <form className="signupbox1signupt" onSubmit={handleSignup}>
+        <h1 className="signuph1signupt">Signup</h1>
         <input
-          className="signupinputsignup"
+          className="signupinputsignupt"
           type="text"
           placeholder="Enter Your Name"
           value={name}
@@ -173,7 +173,7 @@ function Signup() {
           required
         />
         <input
-          className="signupinputsignup"
+          className="signupinputsignupt"
           type="tel"
           placeholder="Enter Your Phone Number"
           value={phno}
@@ -185,7 +185,7 @@ function Signup() {
           required
         />
         <input
-          className="signupinputsignup"
+          className="signupinputsignupt"
           type="email"
           placeholder="Enter Your Email"
           value={email}
@@ -194,7 +194,7 @@ function Signup() {
         />
 
         <input
-          className="signupinputsignup"
+          className="signupinputsignupt"
           type={showPassword ? "text" : "password"}
           placeholder="Create Your Password"
           value={password}
@@ -202,7 +202,7 @@ function Signup() {
           required
         />
         <input
-          className="signupinputsignup"
+          className="signupinputsignupt"
           type={showPassword ? "text" : "password"}
           placeholder="Confirm Your Password"
           value={confirmPassword}
@@ -210,44 +210,44 @@ function Signup() {
           required
         />
 
-        <div className="show-password-containersignup">
+        <div className="show-password-containersignupt">
           <input
             type="checkbox"
             id="show-password"
             checked={showPassword}
             onChange={() => setShowPassword(!showPassword)}
-            className="checkboxinputsignup"
+            className="checkboxinputsignupt"
           />
-          <label htmlFor="show-password" className="checkboxlabelsignup"> Show Password</label>
+          <label htmlFor="show-password" className="checkboxlabelsignupt"> Show Password</label>
         </div>
 
-        <div className="terms-containersignup">
+        <div className="terms-containersignupt">
           <input
             type="checkbox"
             id="terms-checkbox"
             checked={termsAccepted}
             onChange={() => setTermsAccepted(!termsAccepted)}
-            className="checkboxinputsignup"
+            className="checkboxinputsignupt"
           />
-          <label htmlFor="terms-checkbox" onClick={showTermsAndConditions} className="termslabelsignup">
+          <label htmlFor="terms-checkbox" onClick={showTermsAndConditions} className="termslabelsignupt">
             I accept the Terms and Conditions
           </label>
         </div>
 
-        <button type="submit" className="signupbuttonsignup">
+        <button type="submit" className="signupbuttonsignupt">
           Sign Up
         </button>
         {message && (
           <div
-            className={`signupmessagesignup ${
-              message.startsWith("❌") ? "errorsignup" : ""
+            className={`signupmessagesignupt ${
+              message.startsWith("❌") ? "errorsignupt" : ""
             }`}
           >
             {message}
           </div>
         )}
-        <p className="login-linksignup">
-          Already have an account? <Link to="/login" className="loginlinktextsignup">Login</Link>
+        <p className="login-linksignupt">
+          Already have an account? <Link to="/login" className="loginlinktextsignupt">Login</Link>
         </p>
       </form>
     </div>

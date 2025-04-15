@@ -251,6 +251,8 @@
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   cursor: pointer;
   border-top: 4px solid var(--primary);
+  display: flex;
+  flex-direction: column;
 }
 
 .order-item:hover {
@@ -294,6 +296,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex: 1;
 }
 
 .order-info p {
@@ -359,7 +362,7 @@
 /* Responsive Adaptations */
 @media (max-width: 768px) {
   .orders-container {
-    padding: 1rem;
+    padding: 0.75rem;
   }
   
   .orders-dashboard {
@@ -374,22 +377,141 @@
   
   .total-amount-card {
     width: 100%;
+    min-width: unset;
   }
   
   .orders-list {
     grid-template-columns: 1fr;
   }
+  
+  .orders-title {
+    font-size: 1.5rem;
+  }
+  
+  .summary-card {
+    padding: 0.875rem;
+  }
+  
+  .order-header {
+    flex-wrap: wrap;
+  }
+  
+  .order-header h3 {
+    font-size: 0.875rem;
+    width: 100%;
+    margin-bottom: 0.5rem;
+    word-break: break-word;
+  }
+  
+  .order-status {
+    margin-left: auto;
+  }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 576px) {
+  .orders-container {
+    padding: 0.5rem;
+  }
+  
+  .orders-dashboard {
+    padding: 0.875rem;
+    margin-bottom: 1rem;
+  }
+  
+  .total-amount-icon {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .total-amount-icon i {
+    font-size: 1.5rem;
+  }
+  
+  .total-amount-value {
+    font-size: 1.25rem;
+  }
+  
+  .orders-summary {
+    grid-template-columns: 1fr 1fr;
+  }
+  
   .order-details {
     flex-direction: column;
     align-items: flex-start;
   }
   
+  .order-info {
+    width: 100%;
+    margin-bottom: 0.75rem;
+  }
+  
+  .order-info p {
+    font-size: 0.8125rem;
+    margin: 0.375rem 0;
+    display: flex;
+    align-items: flex-start;
+    word-break: break-word;
+  }
+  
+  .order-info p i {
+    margin-top: 0.125rem;
+  }
+  
   .order-amount {
     align-items: flex-start;
-    margin-top: 1rem;
+    margin-top: 0.5rem;
+    width: 100%;
+  }
+  
+  .order-amount .amount-value {
+    font-size: 1.125rem;
+  }
+  
+  .view-details-btn {
+    font-size: 0.8125rem;
+  }
+  
+  .search-input {
+    padding: 0.625rem 1rem 0.625rem 2.25rem;
+    font-size: 0.875rem;
+  }
+  
+  .search-icon {
+    font-size: 1.125rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .order-header {
+    padding: 0.75rem;
+  }
+  
+  .order-details {
+    padding: 0.75rem;
+  }
+  
+  .order-footer {
+    padding: 0.625rem 0.75rem;
+  }
+  
+  .orders-summary {
+    grid-template-columns: 1fr;
+  }
+  
+  .summary-card {
+    margin-bottom: 0.5rem;
+  }
+  
+  .order-info p {
+    display: block;
+    padding-left: 1.5rem;
+    position: relative;
+  }
+  
+  .order-info p i {
+    position: absolute;
+    left: 0;
+    top: 0.125rem;
   }
 }
 

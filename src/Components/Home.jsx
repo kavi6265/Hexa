@@ -291,11 +291,9 @@ function Home() {
             <h3>Jasa Essential</h3>
             <p>Your trusted partner for quality stationery products for students and professionals. We offer a wide range of supplies at competitive prices.</p>
             <div className="social-icons">
-              <a href="#"><i className="bx bxl-facebook"></i></a>
-              <a href="#"><i className="bx bxl-twitter"></i></a>
-              <a href="#"><i className="bx bxl-instagram"></i></a>
-              <a href="#"><i className="bx bxl-pinterest"></i></a>
-              <a href="#"><i className="bx bxl-youtube"></i></a>
+              
+              <a href="https://www.instagram.com/jasa_essential?igsh=MWVpaXJiZGhzeDZ4Ng=="><i className="bx bxl-instagram"></i></a>
+              
             </div>
           </div>
           
@@ -324,9 +322,9 @@ function Home() {
           <div className="footer-column contact-info">
             <h4>Contact Us</h4>
             <p><i className="bx bx-map"></i> 562 Wellington Road, Street 32, San Francisco</p>
-            <p><i className="bx bx-phone"></i> +01 2222 345 / (+91) 0 123 456 789</p>
-            <p><i className="bx bx-time"></i> 10:00 - 18:00, Mon - Sat</p>
-            <p><i className="bx bx-envelope"></i> contact@jasaessential.com</p>
+            <p><i className="bx bx-phone"></i> (+91) 7418676705</p>
+            
+            <p><i className="bx bx-envelope"></i> jasaessential@gmail.com</p>
           </div>
         </div>
         
@@ -339,7 +337,7 @@ function Home() {
             <i className="bx bxl-google-pay"></i>
           </div> */}
           <div className="footer-content">
-        <p className="copyright1" style={{flexDirection:"row"}}>Developed by <a href="https://rapcodetechsolutions.netlify.app/" className="develop-aa"><img src="\public\Rapcode.png" style={{width:"20px",height:"20px",display:"flex",margin:"auto",flexDirection:"row", marginLeft:"10px"}} alt="RapCode Logo"></img>RapCode Tech Solutions</a></p>
+        <p className="copyright1" style={{flexDirection:"row"}}>Developed by <a href="https://rapcodetechsolutions.netlify.app/" className="develop-aa"><img src="/Rapcode.png" style={{width:"20px",height:"20px",display:"flex",margin:"auto",flexDirection:"row", marginLeft:"10px"}} alt="RapCode Logo"></img>RapCode Tech Solutions</a></p>
       </div>
         </div>
         

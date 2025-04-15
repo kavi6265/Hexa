@@ -1,5 +1,5 @@
 /* Container Styling */
-.signupboxsignup {
+.signupboxsignupt {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -10,7 +10,7 @@
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-.signupbox1signup {
+.signupbox1signupt {
   background-color: white;
   padding: 40px 30px;
   border-radius: 16px;
@@ -21,11 +21,11 @@
   transition: transform 0.3s ease;
 }
 
-.signupbox1signup:hover {
+.signupbox1signupt:hover {
   transform: translateY(-5px);
 }
 
-.signuph1signup {
+.signuph1signupt {
   color: #5271ff;
   margin-bottom: 25px;
   font-weight: 700;
@@ -34,7 +34,7 @@
   padding-bottom: 12px;
 }
 
-.signuph1signup::after {
+.signuph1signupt::after {
   content: '';
   position: absolute;
   left: 50%;
@@ -46,8 +46,8 @@
   border-radius: 2px;
 }
 
-/* Input Field Styling */
-.signupinputsignup {
+/* Updated Input Field Styling */
+.signupinputsignupt {
   display: block;
   width: 100%;
   padding: 14px 16px;
@@ -58,20 +58,29 @@
   font-size: 15px;
   transition: all 0.3s ease;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+  background-color: #f7f9ff; /* Light blue background */
+  color: #333;
 }
 
-.signupinputsignup:focus {
+.signupinputsignupt:focus {
   border-color: #5271ff;
   box-shadow: 0 0 0 2px rgba(82, 113, 255, 0.2);
   outline: none;
+  background-color: #ffffff; /* White background when focused */
 }
 
-.signupinputsignup::placeholder {
-  color: #aaa;
+.signupinputsignupt::placeholder {
+  color: #8395c7; /* Blueish placeholder text */
+}
+
+/* You can also add a subtle gradient effect on hover */
+.signupinputsignupt:hover {
+  background: linear-gradient(to right, #f7f9ff, #eef2ff);
+  border-color: #beccff;
 }
 
 /* Button Styling */
-.signupbuttonsignup {
+.signupbuttonsignupt {
   width: 100%;
   padding: 14px;
   background: linear-gradient(90deg, #5271ff, #6e8efb);
@@ -86,24 +95,24 @@
   box-shadow: 0 4px 10px rgba(82, 113, 255, 0.3);
 }
 
-.signupbuttonsignup:hover {
+.signupbuttonsignupt:hover {
   background: linear-gradient(90deg, #4260f5, #5b7ef7);
   box-shadow: 0 6px 12px rgba(82, 113, 255, 0.4);
   transform: translateY(-2px);
 }
 
-.signupbuttonsignup:active {
+.signupbuttonsignupt:active {
   transform: translateY(1px);
 }
 
 /* Login Link Styling */
-.login-linksignup {
+.login-linksignupt {
   margin-top: 20px;
   font-size: 15px;
   color: #666;
 }
 
-.loginlinktextsignup {
+.loginlinktextsignupt {
   color: #5271ff;
   text-decoration: none;
   font-weight: 600;
@@ -111,30 +120,30 @@
   transition: color 0.2s;
 }
 
-.loginlinktextsignup:hover {
+.loginlinktextsignupt:hover {
   color: #3d5af0;
   text-decoration: underline;
 }
 
 /* Message Styling */
-.signupmessagesignup {
+.signupmessagesignupt {
   margin-top: 15px;
   font-size: 14px;
   padding: 10px;
   border-radius: 8px;
-  animation: fadeInsignup 0.5s ease-out;
+  animation: fadeInsignupt 0.5s ease-out;
   font-weight: 500;
   color: #fff;
   background: linear-gradient(90deg, #28a745, #20c997);
   box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
 }
 
-.signupmessagesignup.errorsignup {
+.signupmessagesignupt.errorsignupt {
   background: linear-gradient(90deg, #ff4d4d, #ff6b6b);
   color: #fff;
 }
 
-@keyframes fadeInsignup {
+@keyframes fadeInsignupt {
   from {
     opacity: 0;
   }
@@ -144,8 +153,8 @@
 }
 
 /* Show Password and Terms Checkboxes */
-.show-password-containersignup,
-.terms-containersignup {
+.show-password-containersignupt,
+.terms-containersignupt {
   display: flex;
   align-items: center;
   justify-content: flex-start;
@@ -157,7 +166,7 @@
   color: #555;
 }
 
-.checkboxinputsignup {
+.checkboxinputsignupt {
   appearance: none;
   -webkit-appearance: none;
   width: 18px;
@@ -171,12 +180,12 @@
   transition: background 0.2s, border 0.2s;
 }
 
-.checkboxinputsignup:checked {
+.checkboxinputsignupt:checked {
   background-color: #5271ff;
   border-color: #5271ff;
 }
 
-.checkboxinputsignup:checked::before {
+.checkboxinputsignupt:checked::before {
   content: "";
   position: absolute;
   top: 2px;
@@ -188,28 +197,28 @@
   transform: rotate(45deg);
 }
 
-.show-password-containersignup:hover,
-.terms-containersignup:hover {
+.show-password-containersignupt:hover,
+.terms-containersignupt:hover {
   color: #5271ff;
 }
 
-.checkboxlabelsignup,
-.termslabelsignup {
+.checkboxlabelsignupt,
+.termslabelsignupt {
   cursor: pointer;
 }
 
-.termslabelsignup {
+.termslabelsignupt {
   color: #5271ff;
   text-decoration: underline;
   transition: color 0.2s;
 }
 
-.termslabelsignup:hover {
+.termslabelsignupt:hover {
   color: #3d5af0;
 }
 
 /* Loading State */
-.loadingsignup {
+.loadingsignupt {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -219,7 +228,7 @@
   position: relative;
 }
 
-.loadingsignup::after {
+.loadingsignupt::after {
   content: "";
   width: 40px;
   height: 40px;
@@ -227,10 +236,10 @@
   border-radius: 50%;
   border-top-color: #5271ff;
   position: absolute;
-  animation: spinsignup 1s linear infinite;
+  animation: spinsignupt 1s linear infinite;
 }
 
-@keyframes spinsignup {
+@keyframes spinsignupt {
   to {
     transform: rotate(360deg);
   }
@@ -238,15 +247,15 @@
 
 /* Responsive Adjustments */
 @media (max-width: 480px) {
-  .signupbox1signup {
+  .signupbox1signupt {
     padding: 30px 20px;
   }
   
-  .signuph1signup {
+  .signuph1signupt {
     font-size: 24px;
   }
   
-  .signupinputsignup {
+  .signupinputsignupt {
     padding: 12px 14px;
   }
 }

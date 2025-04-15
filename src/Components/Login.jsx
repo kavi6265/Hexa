@@ -204,16 +204,16 @@ function Login({ onLogin }) {
   };
 
   if (loading) {
-    return <div className="loadinglogin">Loading...</div>;
+    return <div className="loadingloginl">Loading...</div>;
   }
 
   return (
-    <div className="loginboxlogin">
-      <form className="loginbox1login" onSubmit={handleLogin}>
-        <h2 className="loginh1login">Login</h2>
+    <div className="loginboxloginl">
+      <form className="loginbox1loginl" onSubmit={handleLogin}>
+        <h2 className="loginh1loginl">Login</h2>
 
         <input
-          className="logininputlogin"
+          className="logininputloginl"
           type="email"
           placeholder="Enter Your Email"
           value={email}
@@ -221,9 +221,9 @@ function Login({ onLogin }) {
           required
         />
 
-        <div className="password-containerlogin">
+        <div className="password-containerloginl">
           <input
-            className="logininputlogin"
+            className="logininputloginl"
             type={showPassword ? "text" : "password"}
             placeholder="Enter Your Password"
             value={password}
@@ -232,8 +232,8 @@ function Login({ onLogin }) {
           />
         </div>
 
-        <div className="showlogin">
-          <label className="show-passwordlogin">
+        <div className="showloginl">
+          <label className="show-passwordloginl">
             <input
               type="checkbox"
               checked={showPassword}
@@ -241,23 +241,23 @@ function Login({ onLogin }) {
             />
             Show Password
           </label>
-          <p className="forgotpasswordlinklogin" onClick={handleForgotPassword}>
+          <p className="forgotpasswordlinkloginl" onClick={handleForgotPassword}>
             Forgot Password?
           </p>
         </div>
 
-        <button type="submit" className="loginbuttonlogin">
+        <button type="submit" className="loginbuttonloginl">
           Login
         </button>
 
         {/* {message && (
-          <div className={`loginmessagelogin ${messageType}`}>{message}</div>
+          <div className={`loginmessageloginl ${messageType}`}>{message}</div>
         )} */}
 
-        <p className="signup-linklogin">
+        <p className="signup-linkloginl">
           Don't have an account?
           <span
-            className="signup-textlogin"
+            className="signup-textloginl"
             onClick={() => navigate("/signup")}
             style={{
               color: "blue",
@@ -272,22 +272,22 @@ function Login({ onLogin }) {
       </form>
 
       {showResetModal && (
-        <div className="reset-modalogin">
-          <div className="reset-modal-contentlogin">
+        <div className="reset-modaloginl">
+          <div className="reset-modal-contentloginl">
             <h4>Reset Password</h4>
             <input
               type="email"
               placeholder="Enter your email for reset"
               value={resetEmail}
               onChange={(e) => setResetEmail(e.target.value)}
-              className="reset-email-inputlogin"
+              className="reset-email-inputloginl"
             />
-            <div className="reset-buttonslogin">
-              <button className="reset-buttonlogin" onClick={handleResetPassword}>
+            <div className="reset-buttonsloginl">
+              <button className="reset-buttonloginl" onClick={handleResetPassword}>
                 Reset
               </button>
               <button
-                className="cancel-buttonlogin"
+                className="cancel-buttonloginl"
                 onClick={() => setShowResetModal(false)}
               >
                 Cancel

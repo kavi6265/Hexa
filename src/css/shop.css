@@ -142,14 +142,12 @@
     width: 100%;
   }
   
-  .hero-content h1 {
+  .hero-content h2 {
     font-size: 3.5rem;
     font-weight: 700;
     margin-bottom: 1rem;
-    background: linear-gradient(90deg, #ffffff, #e0e7ff);
-    --webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    text-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+   
+  
   }
   
   .hero-content p {

@@ -167,10 +167,7 @@ function Payment() {
   return (
     <div className="payment-container">
       <div className="header">
-        <button className="back-button" onClick={handleGoBack}>
-          ←
-        </button>
-        <h1 className="title">Payment</h1>
+        <h1 className="title2">Payment</h1>
       </div>
       
       <div className="payment-content">

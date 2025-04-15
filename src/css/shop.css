@@ -156,57 +156,64 @@
     font-weight: 300;
   }
   
-  /* Search Container */
-  .search-container {
-    position: relative;
-    max-width: 600px;
-    margin: 0 auto;
-    background-color: rgba(255, 255, 255, 0.95);
-    border-radius: 50px;
-    padding: 12px 24px;
-    display: flex;
-    align-items: center;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-    transition: var(--transition);
-  }
-  
-  .search-container.focused {
-    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.2);
-    transform: translateY(-2px);
-  }
-  
-  .search-icon {
-    font-size: 1.5rem;
-    color: var(--primary-color);
-    margin-right: 10px;
-  }
-  
-  .search-input {
-    flex: 1;
-    border: none;
-    outline: none;
-    background: transparent;
-    font-size: 1rem;
-    padding: 6px 0;
-    color: var(--text-color);
-    font-family: var(--font-body);
-  }
-  
-  .search-input::placeholder {
-    color: var(--light-text);
-    opacity: 0.8;
-  }
-  
-  .clear-search {
-    font-size: 1.2rem;
-    color: var(--light-text);
-    cursor: pointer;
-    transition: var(--transition);
-  }
-  
-  .clear-search:hover {
-    color: var(--error);
-  }
+ /* Search Container - Updated */
+.search-containershop {
+  position: relative;
+  max-width: 600px;
+  width: 100%;
+  margin: 0 auto;
+  background-color: rgba(255, 255, 255, 0.95);
+  border-radius: 50px;
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  transition: var(--transition);
+  z-index: 10;
+}
+
+.search-containershop.focused {
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.2);
+  transform: translateY(-2px);
+  background-color: white;
+}
+
+.search-iconshop {
+  font-size: 1.5rem;
+  color: var(--primary-color);
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+
+.search-inputshop {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 1rem;
+  padding: 6px 0;
+  color: var(--text-color);
+  font-family: var(--font-body);
+  width: 100%;
+}
+
+.search-inputshop::placeholder {
+  color: var(--light-text);
+  opacity: 0.8;
+}
+
+.clear-searchshop {
+  font-size: 1.2rem;
+  color: var(--light-text);
+  cursor: pointer;
+  transition: var(--transition);
+  flex-shrink: 0;
+  margin-left: 8px;
+}
+
+.clear-searchshop:hover {
+  color: var(--error);
+}
   
   /* Category Section */
   .category-section {
@@ -772,7 +779,7 @@
       height: 70vh;
     }
     
-    .hero-content h1 {
+    .hero-content h2 {
       font-size: 2rem;
     }
     

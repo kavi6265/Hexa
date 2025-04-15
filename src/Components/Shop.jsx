@@ -508,11 +508,11 @@ const Shop = () => {
           <p>Discover quality supplies for school, college, and office needs</p>
           
           {/* Search Container */}
-          <div className={`search-container ${searchFocused ? 'focused' : ''}`}>
-            <i className="bx bx-search search-icon"></i>
+          <div className={`search-containershop ${searchFocused ? 'focused' : ''}`}>
+            <i className="bx bx-search search-iconshop"></i>
             <input
               type="text"
-              className="search-input"
+              className="search-inputshop"
               placeholder="Search for products..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -520,7 +520,7 @@ const Shop = () => {
               onBlur={() => setSearchFocused(false)}
             />
             {searchQuery && (
-              <i className="bx bx-x clear-search" onClick={clearSearch}></i>
+              <i className="bx bx-x clear-searchshop" onClick={clearSearch}></i>
             )}
           </div>
         </div>

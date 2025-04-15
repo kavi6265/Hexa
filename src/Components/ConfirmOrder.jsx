@@ -364,11 +364,9 @@ function ConfirmOrder() {
   return (
     <div className="confirm-order-container">
       <div className="header">
-        <button className="back-button" onClick={handleGoBack}>
-          ←
-        </button>
-        <h1 className="title">Confirm Order</h1>
-      </div>
+ 
+  <h1 className="title1">Confirm Order</h1>
+</div>
       
       <div className="order-summary-section">
         <h2>Order Summary</h2>

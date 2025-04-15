@@ -285,70 +285,59 @@ function Home() {
         </div>
       </section>
 
-      <div className="newsletter-sectionhome">
-        <div className="newsletter-contenthome">
-          <h3 className="newsletter-titlehome">Subscribe To Our Newsletter</h3>
-          <p className="newsletter-texthome">Get updates on new products and special offers</p>
-          <div className="newsletter-formhome">
-            <input type="email" className="newsletter-inputhome" placeholder="Your email address" />
-            <button className="subscribe-btnhome">Subscribe</button>
-          </div>
-        </div>
-      </div>
-
-      <footer className="section-p1home footerhome">
-        <div className="footer-contenthome">
-          <div className="colhome company-infohome">
-            <h3 className="footer-titlehome">Jasa Essential</h3>
-            <h4 className="footer-subtitlehome">Contact</h4>
-            <p className="footer-texthome">
-              <i className="bx bx-map footer-iconhome"></i>
-              <strong className="footer-boldhome">Address:</strong> 562 Wellington Road, Street 32, San Francisco
-            </p>
-            <p className="footer-texthome">
-              <i className="bx bx-phone footer-iconhome"></i>
-              <strong className="footer-boldhome">Phone:</strong> +01 2222 345 / (+91) 0 123 456 789
-            </p>
-            <p className="footer-texthome">
-              <i className="bx bx-time footer-iconhome"></i>
-              <strong className="footer-boldhome">Hours:</strong> 10:00 - 18:00, Mon - Sat
-            </p>
-            <div className="followhome">
-              <h4 className="footer-subtitlehome">Follow Us</h4>
-              <div className="social-iconshome">
-                <a href="#" className="social-linkhome"><i className="bx bxl-facebook social-iconhome"></i></a>
-                <a href="#" className="social-linkhome"><i className="bx bxl-twitter social-iconhome"></i></a>
-                <a href="#" className="social-linkhome"><i className="bx bxl-instagram social-iconhome"></i></a>
-                <a href="#" className="social-linkhome"><i className="bx bxl-pinterest-alt social-iconhome"></i></a>
-                <a href="#" className="social-linkhome"><i className="bx bxl-youtube social-iconhome"></i></a>
-              </div>
+      <footer className="modern-footer">
+        <div className="footer-content">
+          <div className="footer-column brand-column">
+            <h3>Jasa Essential</h3>
+            <p>Your trusted partner for quality stationery products for students and professionals. We offer a wide range of supplies at competitive prices.</p>
+            <div className="social-icons">
+              <a href="#"><i className="bx bxl-facebook"></i></a>
+              <a href="#"><i className="bx bxl-twitter"></i></a>
+              <a href="#"><i className="bx bxl-instagram"></i></a>
+              <a href="#"><i className="bx bxl-pinterest"></i></a>
+              <a href="#"><i className="bx bxl-youtube"></i></a>
             </div>
           </div>
-
-          <div className="colhome">
-            <h4 className="footer-subtitlehome">About</h4>
-            <ul className="footer-listhome">
-              <li className="footer-list-itemhome"><a href="#" className="footer-linkhome">About us</a></li>
-              <li className="footer-list-itemhome"><a href="#" className="footer-linkhome">Delivery Information</a></li>
-              <li className="footer-list-itemhome"><a href="#" className="footer-linkhome">Privacy Policy</a></li>
-              <li className="footer-list-itemhome"><a href="#" className="footer-linkhome">Terms & Conditions</a></li>
-              <li className="footer-list-itemhome"><a href="#" className="footer-linkhome">Contact Us</a></li>
+          
+          <div className="footer-column">
+            <h4>Quick Links</h4>
+            <ul>
+              <li><a href="#">Home</a></li>
+              <li><a href="#">Shop</a></li>
+              <li><a href="#">About Us</a></li>
+              <li><a href="#">Contact</a></li>
+              <li><a href="#">FAQ</a></li>
             </ul>
           </div>
-
-          <div className="colhome">
-            <h4 className="footer-subtitlehome">My Account</h4>
-            <ul className="footer-listhome">
-              <li className="footer-list-itemhome"><a href="#" className="footer-linkhome">Sign In</a></li>
-              <li className="footer-list-itemhome"><a href="#" className="footer-linkhome">View Cart</a></li>
-              <li className="footer-list-itemhome"><a href="#" className="footer-linkhome">My Wishlist</a></li>
-              <li className="footer-list-itemhome"><a href="#" className="footer-linkhome">Track My Order</a></li>
-              <li className="footer-list-itemhome"><a href="#" className="footer-linkhome">Help</a></li>
+          
+          <div className="footer-column">
+            <h4>Customer Service</h4>
+            <ul>
+              <li><a href="#">My Account</a></li>
+              <li><a href="#">Order History</a></li>
+              <li><a href="#">Shipping Policy</a></li>
+              <li><a href="#">Returns & Exchanges</a></li>
+              <li><a href="#">Terms & Conditions</a></li>
             </ul>
+          </div>
+          
+          <div className="footer-column contact-info">
+            <h4>Contact Us</h4>
+            <p><i className="bx bx-map"></i> 562 Wellington Road, Street 32, San Francisco</p>
+            <p><i className="bx bx-phone"></i> +01 2222 345 / (+91) 0 123 456 789</p>
+            <p><i className="bx bx-time"></i> 10:00 - 18:00, Mon - Sat</p>
+            <p><i className="bx bx-envelope"></i> contact@jasaessential.com</p>
           </div>
         </div>
-        <div className="copyrighthome">
-          <p className="copyright-texthome">© 2025 Jasa Essential - All Rights Reserved</p>
+        
+        <div className="footer-bottom">
+          <p>&copy; 2025 Jasa Essential. All Rights Reserved.</p>
+          <div className="payment-methods">
+            <i className="bx bxl-visa"></i>
+            <i className="bx bxl-mastercard"></i>
+            <i className="bx bxl-paypal"></i>
+            <i className="bx bxl-google-pay"></i>
+          </div>
         </div>
       </footer>
     </>

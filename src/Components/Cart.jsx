@@ -272,95 +272,96 @@ const getImageResource = (imageId) => {
   }
 
   return (
-    <div className="cart-page">
-      <section className="page-header">
-        <h2>#cart</h2>
-        <p>View your selected items</p>
+    <div className="cart-pagecart">
+      <section className="page-headercart">
+        <h2 className="page-header-titlecart">#cart</h2>
+        <p className="page-header-desccart">View your selected items</p>
       </section>
 
-      <section className="cart-container">
+      <section className="cart-containercart">
         {cartItems.length === 0 ? (
-          <div className="empty-cart">
-            <i className="bx bx-cart-alt empty-cart-icon"></i>
-            <h2>Your cart is empty</h2>
-            <button onClick={() => navigate("/shop")} className="shop-btn">Continue Shopping</button>
+          <div className="empty-cartcart">
+            <i className="bx bx-cart-alt empty-cart-iconcart"></i>
+            <h2 className="empty-cart-titlecart">Your cart is empty</h2>
+            <button onClick={() => navigate("/shop")} className="shop-btncart">Continue Shopping</button>
           </div>
         ) : (
           <>
-            <div className="cart-table-container">
-              <table className="cart-table">
-                <thead>
-                  <tr>
-                    <th>Remove</th>
-                    <th>Image</th>
-                    <th>Product</th>
-                    <th>Price</th>
-                    <th>Quantity</th>
-                    <th>Subtotal</th>
+            <div className="cart-table-containercart">
+              <table className="cart-tablecart">
+                <thead className="cart-table-headcart">
+                  <tr className="cart-table-rowcart">
+                    <th className="cart-table-headercart">Remove</th>
+                    <th className="cart-table-headercart">Image</th>
+                    <th className="cart-table-headercart">Product</th>
+                    <th className="cart-table-headercart">Price</th>
+                    <th className="cart-table-headercart">Quantity</th>
+                    <th className="cart-table-headercart">Subtotal</th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody className="cart-table-bodycart">
                   {cartItems.map((item) => (
-                    <tr key={item.id} className="cart-item">
-                      <td>
+                    <tr key={item.id} className="cart-itemcart">
+                      <td className="cart-item-cellcart">
                         <button 
                           onClick={() => handleRemoveItem(item.id)}
-                          className="remove-btn"
+                          className="remove-btncart"
                           aria-label="Remove item"
                         >
-                          <i className="bx bx-x-circle"></i>
+                          <i className="bx bx-x-circle remove-iconcart" ></i>
                         </button>
                       </td>
-                      <td className="product-image">
+                      <td className="product-imagecart">
                         <img 
                           src={getImageResource(item.productimage)} 
-                          alt={item.productname} 
+                          alt={item.productname}
+                          className="product-thumbnail-imgcart" 
                         />
                       </td>
-                      <td className="product-name">{item.productname}</td>
-                      <td className="product-price">₹{item.productamt}</td>
-                      <td>
-                        <div className="quantity-control">
+                      <td className="product-namecart">{item.productname}</td>
+                      <td className="product-pricecart">₹{item.productamt}</td>
+                      <td className="quantity-cellcart">
+                        <div className="quantity-controlcart">
                           <button 
                             onClick={() => handleQuantityChange(item.id, item.qty - 1)}
-                            className="qty-btn"
+                            className="qty-btncart"
                             aria-label="Decrease quantity"
                           >
                             -
                           </button>
-                          <span className="qty-value">{item.qty}</span>
+                          <span className="qty-valuecart">{item.qty}</span>
                           <button 
                             onClick={() => handleQuantityChange(item.id, item.qty + 1)}
-                            className="qty-btn"
+                            className="qty-btncart"
                             aria-label="Increase quantity"
                           >
                             +
                           </button>
                         </div>
                       </td>
-                      <td className="subtotal">₹{(parseFloat(item.productamt) * item.qty).toFixed(2)}</td>
+                      <td className="subtotalcart">₹{(parseFloat(item.productamt) * item.qty).toFixed(2)}</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
 
-            <div className="cart-summary">
-              <div className="summary-content">
-                <h3>Cart Totals</h3>
-                <div className="summary-line">
-                  <span>Cart Subtotal</span>
-                  <span>₹{totalAmount.toFixed(2)}</span>
+            <div className="cart-summarycart">
+              <div className="summary-contentcart">
+                <h3 className="summary-titlecart">Cart Totals</h3>
+                <div className="summary-linecart">
+                  <span className="summary-line-labelcart">Cart Subtotal</span>
+                  <span className="summary-line-valuecart">₹{totalAmount.toFixed(2)}</span>
                 </div>
-                <div className="summary-line">
-                  <span>Shipping</span>
-                  <span>Free</span>
+                <div className="summary-linecart">
+                  <span className="summary-line-labelcart">Shipping</span>
+                  <span className="summary-line-valuecart">Free</span>
                 </div>
-                <div className="summary-line total">
-                  <span>Total</span>
-                  <span>₹{totalAmount.toFixed(2)}</span>
+                <div className="summary-linecart totalcart">
+                  <span className="summary-line-labelcart">Total</span>
+                  <span className="summary-line-valuecart">₹{totalAmount.toFixed(2)}</span>
                 </div>
-                <button onClick={handleCheckout} className="checkout-btn">
+                <button onClick={handleCheckout} className="checkout-btncart">
                   Proceed to checkout
                 </button>
               </div>
@@ -369,41 +370,59 @@ const getImageResource = (imageId) => {
         )}
       </section>
 
-      <footer className="main-footer">
-        <div className="footer-col">
-          <h3>Jasa Essential</h3>
-          <h4>Contact</h4>
-          <p><strong>Address:</strong> 562 Wellington Road, Street 32, San Francisco</p>
-          <p><strong>Phone:</strong> +01 2222 345 / (+91) 0 123 456 789</p>
-          <p><strong>Hours:</strong> 10:00 - 18:00, Mon - Sat</p>
-          <div className="social-follow">
-            <h4>Follow us</h4>
+      <footer className="modern-footer">
+        <div className="footer-content">
+          <div className="footer-column brand-column">
+            <h3>Jasa Essential</h3>
+            <p>Your trusted partner for quality stationery products for students and professionals. We offer a wide range of supplies at competitive prices.</p>
             <div className="social-icons">
-              <i className="bx bxl-facebook"></i>
-              <i className="bx bxl-twitter"></i>
-              <i className="bx bxl-instagram"></i>
-              <i className="bx bxl-pinterest-alt"></i>
-              <i className="bx bxl-youtube"></i>
+              <a href="#"><i className="bx bxl-facebook"></i></a>
+              <a href="#"><i className="bx bxl-twitter"></i></a>
+              <a href="#"><i className="bx bxl-instagram"></i></a>
+              <a href="#"><i className="bx bxl-pinterest"></i></a>
+              <a href="#"><i className="bx bxl-youtube"></i></a>
             </div>
           </div>
+          
+          <div className="footer-column">
+            <h4>Quick Links</h4>
+            <ul>
+              <li><a href="#">Home</a></li>
+              <li><a href="#">Shop</a></li>
+              <li><a href="#">About Us</a></li>
+              <li><a href="#">Contact</a></li>
+              <li><a href="#">FAQ</a></li>
+            </ul>
+          </div>
+          
+          <div className="footer-column">
+            <h4>Customer Service</h4>
+            <ul>
+              <li><a href="#">My Account</a></li>
+              <li><a href="#">Order History</a></li>
+              <li><a href="#">Shipping Policy</a></li>
+              <li><a href="#">Returns & Exchanges</a></li>
+              <li><a href="#">Terms & Conditions</a></li>
+            </ul>
+          </div>
+          
+          <div className="footer-column contact-info">
+            <h4>Contact Us</h4>
+            <p><i className="bx bx-map"></i> 562 Wellington Road, Street 32, San Francisco</p>
+            <p><i className="bx bx-phone"></i> +01 2222 345 / (+91) 0 123 456 789</p>
+            <p><i className="bx bx-time"></i> 10:00 - 18:00, Mon - Sat</p>
+            <p><i className="bx bx-envelope"></i> contact@jasaessential.com</p>
+          </div>
         </div>
-
-        <div className="footer-col">
-          <h4>About</h4>
-          <a href="#">About us</a>
-          <a href="#">Delivery Information</a>
-          <a href="#">Privacy Policy</a>
-          <a href="#">Terms & Conditions</a>
-          <a href="#">Contact Us</a>
-        </div>
-
-        <div className="footer-col">
-          <h4>My Account</h4>
-          <a href="#">Sign In</a>
-          <a href="#">View Cart</a>
-          <a href="#">My Wishlist</a>
-          <a href="#">Track My Order</a>
-          <a href="#">Help</a>
+        
+        <div className="footer-bottom">
+          <p>&copy; 2025 Jasa Essential. All Rights Reserved.</p>
+          <div className="payment-methods">
+            <i className="bx bxl-visa"></i>
+            <i className="bx bxl-mastercard"></i>
+            <i className="bx bxl-paypal"></i>
+            <i className="bx bxl-google-pay"></i>
+          </div>
         </div>
       </footer>
     </div>

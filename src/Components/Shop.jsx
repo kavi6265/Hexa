@@ -636,7 +636,7 @@ const Shop = () => {
           
           <div className="footer-column contact-info">
             <h4>Contact Us</h4>
-            <p><i className="bx bx-map"></i> 562 Wellington Road, Street 32, San Francisco</p>
+            <p><i className="bx bx-map"></i>2/3 line medu pension line 2 nd street  line medu , salem 636006</p>
             <p><i className="bx bx-phone"></i> (+91) 7418676705</p>
             
             <p><i className="bx bx-envelope"></i> jasaessential@gmail.com</p>

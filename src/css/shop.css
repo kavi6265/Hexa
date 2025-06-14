@@ -32,6 +32,8 @@
     font-family: var(--font-body);
     color: var(--text-color);
     background-color: var(--light-bg);
+    /* background-image: radial-gradient(circle, #a7544b, #b35561, #ba597b, #ba6196, #b26db2); */
+    line-height: 1.6;
     line-height: 1.6;
   }
   

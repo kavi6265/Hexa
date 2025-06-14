@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { database, auth } from "./firebase"; 
 import { ref, push, set, get } from "firebase/database";
 import "../css/Home.css";
-
 
 const REVERSE_IMAGE_MAPPING = {
   "casio991.jpg": "2131230957",
@@ -25,13 +24,16 @@ function Home() {
   const [cartItems, setCartItems] = useState([]);
   const [showNotification, setShowNotification] = useState(false);
   const [notificationMessage, setNotificationMessage] = useState("");
+  const [loading, setLoading] = useState(true);
 
   const handleProductClick = (product) => {
+    // Allow product view without authentication
     navigate("/product", { state: { product } });
   };
 
   // Add useEffect to check authentication status
   useEffect(() => {
+    setLoading(true);
     const unsubscribe = auth.onAuthStateChanged((currentUser) => {
       setUser(currentUser);
       
@@ -56,6 +58,7 @@ function Home() {
         // Clear cart items when user logs out
         setCartItems([]);
       }
+      setLoading(false);
     });
     
     // Clean up subscription on unmount
@@ -79,11 +82,18 @@ function Home() {
     }, 3000);
   };
 
+  const handleShopNowClick = () => {
+    // Allow viewing shop without authentication
+    navigate("/shop");
+  };
+
   const addToCart = (e, product) => {
     e.stopPropagation(); // Prevent triggering the product click
     e.preventDefault(); // Prevent default anchor behavior
     
     if (!user) {
+      // Store the intended product to add to cart after login
+      localStorage.setItem("pendingCartProduct", JSON.stringify(product));
       showNotificationAlert("Please login to add items to cart");
       setTimeout(() => navigate("/login"), 1500);
       return;
@@ -137,6 +147,15 @@ function Home() {
       });
   };
 
+  // Display loading spinner while authentication state is being checked
+  if (loading) {
+    return (
+      <div className="profile-loading">
+        <div className="spinner"></div>
+      </div>
+    );
+  }
+
   return (
     <>
       {showNotification && (
@@ -150,7 +169,7 @@ function Home() {
           <h2 className="fade-inhome h2home" style={{color:"#465b52"}}>Welcome To</h2>
           <h1 className="slide-inhome h1home">Jasa Essential</h1>
           <p className="fade-in-delayhome paragraph-texthome">Save more with coupons & up to 70% off!</p>
-          <button className="btnhome pulsehome" onClick={() => navigate("/shop")}>
+          <button className="btnhome pulsehome" onClick={handleShopNowClick}>
             Shop Now <i className="bx bx-right-arrow-alt icon-arrowhome"></i>
           </button>
         </div>
@@ -291,19 +310,17 @@ function Home() {
             <h3>Jasa Essential</h3>
             <p>Your trusted partner for quality stationery products for students and professionals. We offer a wide range of supplies at competitive prices.</p>
             <div className="social-icons">
-              
               <a href="https://www.instagram.com/jasa_essential?igsh=MWVpaXJiZGhzeDZ4Ng=="><i className="bx bxl-instagram"></i></a>
-              
             </div>
           </div>
           
           <div className="footer-column">
             <h4>Quick Links</h4>
             <ul>
-              <li><a href="#">Home</a></li>
-              <li><a href="#">Shop</a></li>
-              <li><a href="#">About Us</a></li>
-              <li><a href="#">Contact</a></li>
+              <li><Link to="/home">Home</Link></li>
+              <li><Link to="/shop">Shop</Link></li>
+              <li><Link to="/about">About Us</Link></li>
+              <li><Link to="/contact">Contact</Link></li>
               <li><a href="#">FAQ</a></li>
             </ul>
           </div>
@@ -311,8 +328,8 @@ function Home() {
           <div className="footer-column">
             <h4>Customer Service</h4>
             <ul>
-              <li><a href="#">My Account</a></li>
-              <li><a href="#">Order History</a></li>
+              <li><Link to={user ? "/profile" : "/login"}>My Account</Link></li>
+              <li><Link to={user ? "/ProductOrderUser" : "/login"}>Order History</Link></li>
               <li><a href="#">Shipping Policy</a></li>
               <li><a href="#">Returns & Exchanges</a></li>
               <li><a href="#">Terms & Conditions</a></li>
@@ -321,26 +338,23 @@ function Home() {
           
           <div className="footer-column contact-info">
             <h4>Contact Us</h4>
-            <p><i className="bx bx-map"></i> 2/3 line medu pension line 2 nd street  line medu , salem 636006</p>
+            <p><i className="bx bx-map"></i> 2/3 line medu pension line 2 nd street line medu, salem 636006</p>
             <p><i className="bx bx-phone"></i> (+91) 7418676705</p>
-            
             <p><i className="bx bx-envelope"></i> jasaessential@gmail.com</p>
           </div>
         </div>
         
         <div className="footer-bottom" style={{display:"block"}}>
           <p>&copy; 2025 Jasa Essential. All Rights Reserved.</p>
-          {/* <div className="payment-methods">
-            <i className="bx bxl-visa"></i>
-            <i className="bx bxl-mastercard"></i>
-            <i className="bx bxl-paypal"></i>
-            <i className="bx bxl-google-pay"></i>
-          </div> */}
           <div className="footer-content">
-        <p className="copyright1" style={{flexDirection:"row"}}>Developed by <a href="https://rapcodetechsolutions.netlify.app/" className="develop-aa"><img src="/Rapcode.png" style={{width:"20px",height:"20px",display:"flex",margin:"auto",flexDirection:"row", marginLeft:"10px"}} alt="RapCode Logo"></img>RapCode Tech Solutions</a></p>
-      </div>
+            <p className="copyright1" style={{flexDirection:"row"}}>
+              Developed by <a href="https://rapcodetechsolutions.netlify.app/" className="develop-aa">
+                <img src="/Rapcode.png" style={{width:"20px",height:"20px",display:"flex",margin:"auto",flexDirection:"row", marginLeft:"10px"}} alt="RapCode Logo" />
+                RapCode Tech Solutions
+              </a>
+            </p>
+          </div>
         </div>
-        
       </footer>
     </>
   );

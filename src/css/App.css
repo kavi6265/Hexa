@@ -1713,4 +1713,51 @@
       animation: pulse 1.5s infinite;
     }
   }
+
+
+  .mobile-only-nav-item {
+  display: none;
+}
+
+/* Desktop-only elements that hide on small screens */
+@media screen and (max-width: 768px) {
+  .mobile-only-nav-item {
+    display: block;
+  }
   
+  .desktop-only {
+    display: none !important;
+  }
+  
+  /* Make sure navbar is properly formatted for mobile */
+  .navbar .nav-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .navbar .nav-links {
+    width: 100%;
+  }
+  
+  /* Ensure menu items have proper spacing */
+  .navbar .nav-links li {
+    margin: 10px 0;
+  }
+  
+  /* Make sure mobile menu doesn't overflow */
+  .navbar.active {
+    max-height: 100vh;
+    overflow-y: auto;
+  }
+}
+
+/* Make sure desktop elements display properly on larger screens */
+@media screen and (min-width: 769px) {
+  .mobile-only-nav-item {
+    display: none;
+  }
+  
+  .desktop-only {
+    display: flex !important;
+  }
+}

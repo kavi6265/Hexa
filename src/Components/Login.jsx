@@ -161,7 +161,7 @@ function Login({ onLogin }) {
         } else if (userType === "tempadmin") {
           navigate("/tempadmin");
         } else {
-          navigate("/home");
+          navigate("/xerox"); // Changed from '/xerox' to '/xerox'
         }
       }, 1000);
     } catch (error) {

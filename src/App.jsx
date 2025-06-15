@@ -43,7 +43,7 @@ import OrderedProductpreview from "./Components/OrderedProductpreview";
 import Payment from "./Components/Payment";
 import "./css/index.css";
 import XeroxOrderUser from "./Components/XeroxOrdersuser";
-import Xeroxorderpreview from "./Components/Xeroxoderpreview" 
+import Xeroxorderpreview from "./Components/Xeroxoderpreview"; 
 import XeroxAllordersmAdmin from "./Components/XeroxAllordersmAdmin";
 
 // Navbar component
@@ -126,26 +126,73 @@ function Navbar({ user, profileImageUrl }) {
                     <span>Xerox</span>
                   </Link>
                 </li>
+                {/* Add cart and profile or login and signup links based on auth state */}
+                {user ? (
+                  <>
+                    <li className="mobile-only-nav-item">
+                      <Link to="/cart" className={getActiveClass("/cart")}>
+                        <i className="bx bx-shopping-bag"></i>
+                        <span>Cart</span>
+                      </Link>
+                    </li>
+                    <li className="mobile-only-nav-item">
+                      <Link to="/profile" className={getActiveClass("/profile")}>
+                        <i className="bx bx-user"></i>
+                        <span>Profile</span>
+                      </Link>
+                    </li>
+                  </>
+                ) : (
+                  <>
+                    <li className="mobile-only-nav-item">
+                      <Link to="/login" className={getActiveClass("/login")}>
+                        <i className="bx bx-log-in"></i>
+                        <span>Login</span>
+                      </Link>
+                    </li>
+                    <li className="mobile-only-nav-item">
+                      <Link to="/signup" className={getActiveClass("/signup")}>
+                        <i className="bx bx-user-plus"></i>
+                        <span>Signup</span>
+                      </Link>
+                    </li>
+                  </>
+                )}
               </ul>
-              <div className="cart-pro">
-                <Link
-                  to="/cart"
-                  className={`cart-icon ${getActiveClass("/cart")}`}
-                >
-                  <i className="bx bx-shopping-bag"></i>
-                </Link>
 
-                <Link
-                  to="/profile"
-                  className={`profile-link ${getActiveClass("/profile")}`}
-                >
-                  <img
-                    src={profileImageUrl || "person3.jpg"}
-                    alt="Profile"
-                    className="profile-image"
-                  />
-                </Link>
-              </div>
+              {/* Desktop view auth controls - hide on mobile */}
+              {user ? (
+                <div className="cart-pro desktop-only">
+                  <Link
+                    to="/cart"
+                    className={`cart-icon ${getActiveClass("/cart")}`}
+                  >
+                    <i className="bx bx-shopping-bag"></i>
+                  </Link>
+
+                  <Link
+                    to="/profile"
+                    className={`profile-link ${getActiveClass("/profile")}`}
+                  >
+                    <img
+                      src={profileImageUrl || "person3.jpg"}
+                      alt="Profile"
+                      className="profile-image"
+                    />
+                  </Link>
+                </div>
+              ) : (
+                <div className="auth-buttons desktop-only">
+                  <Link to="/login" className={`login-btn ${getActiveClass("/login")}`}>
+                    <i className="bx bx-log-in"></i>
+                    <span>Login</span>
+                  </Link>
+                  <Link to="/signup" className={`signup-btn ${getActiveClass("/signup")}`}>
+                    <i className="bx bx-user-plus"></i>
+                    <span>Signup</span>
+                  </Link>
+                </div>
+              )}
             </div>
           </nav>
 
@@ -155,9 +202,24 @@ function Navbar({ user, profileImageUrl }) {
         </div>
 
         <div className="mobile-controls">
-          <Link to="/cart" className="mobile-cart">
-            <i className="bx bx-shopping-bag"></i>
-          </Link>
+          {user ? (
+            <>
+              <Link to="/cart" className="mobile-cart">
+                <i className="bx bx-shopping-bag"></i>
+              </Link>
+              <Link to="/profile" className="mobile-profile">
+                <img
+                  src={profileImageUrl || "person3.jpg"}
+                  alt="Profile"
+                  className="mobile-profile-image"
+                />
+              </Link>
+            </>
+          ) : (
+            <Link to="/login" className="mobile-login">
+              <i className="bx bx-log-in"></i>
+            </Link>
+          )}
           <button className="menu-toggle" onClick={toggleMenu}>
             <i className="bx bx-menu"></i>
           </button>
@@ -280,7 +342,7 @@ function App() {
           setUserRole(role);
           localStorage.setItem("userRole", role);
 
-          // Correctly route users based on their role
+          // Redirect logged-in users based on role
           if (
             location.pathname === "/login" ||
             location.pathname === "/signup"
@@ -290,7 +352,7 @@ function App() {
                 ? "/admin"
                 : role === "tempadmin"
                 ? "/tempadmin"
-                : "/home";
+                : "/xerox";  // Changed from "/home" to "/xerox"
             navigate(routeToNavigate);
           }
         });
@@ -301,101 +363,35 @@ function App() {
         localStorage.removeItem("userEmail");
         localStorage.removeItem("userId");
         localStorage.removeItem("userRole");
-
-        if (!["/login", "/signup"].includes(location.pathname)) {
-          navigate("/login");
+        
+        // Only redirect to login for protected routes
+        const protectedRoutes = [
+          "/cart", 
+          "/profile", 
+          "/edit-profile",
+          "/payment",
+          "/xeroxordersuser",
+          "/confirm-order",
+          "/ProductOrderUser",
+          "/checkout",
+          "/success"
+        ];
+        
+        // Check if current path is protected
+        if (protectedRoutes.includes(location.pathname) || 
+            location.pathname.includes("/OrderedProductpreview/") ||
+            location.pathname.includes("/order-detail/")) {
+          navigate("/login", { state: { from: location.pathname }});
         }
       }
+      setLoading(false);
     });
 
     return () => unsubscribe();
   }, [navigate, location.pathname]);
 
-  useEffect(() => {
-    const storedEmail = localStorage.getItem("userEmail");
-    const storedUserId = localStorage.getItem("userId");
-    const storedRole = localStorage.getItem("userRole");
-
-    if (storedEmail && storedUserId) {
-      setUser({ email: storedEmail, uid: storedUserId });
-
-      fetchUserProfile(storedUserId);
-
-      const tempAdminsRef = ref(database, "tempadmin");
-
-      onValue(tempAdminsRef, (snapshot) => {
-        const tempAdminsList = [];
-        if (snapshot.exists()) {
-          snapshot.forEach((childSnapshot) => {
-            const tempAdminEmail = childSnapshot.child("email").val();
-            if (tempAdminEmail) {
-              tempAdminsList.push(tempAdminEmail.toLowerCase());
-            }
-          });
-        }
-
-        setTempAdmins(tempAdminsList);
-
-        const lowerEmail = storedEmail.toLowerCase();
-        const role = admins.includes(lowerEmail)
-          ? "admin"
-          : tempAdminsList.includes(lowerEmail)
-          ? "tempadmin"
-          : "user";
-
-        setUserRole(role);
-        localStorage.setItem("userRole", role);
-
-        if (!["/login", "/signup"].includes(location.pathname)) {
-          const isAdminOnAdminRoute =
-            role === "admin" && location.pathname.startsWith("/admin");
-          const isTempAdminOnTempRoute =
-            role === "tempadmin" && location.pathname.startsWith("/tempadmin");
-          const isUserOnUserRoute =
-            role === "user" &&
-            !["/admin", "/tempadmin"].some((prefix) =>
-              location.pathname.startsWith(prefix)
-            );
-
-          // If not on the correct route for their role, redirect them
-          if (
-            !isAdminOnAdminRoute &&
-            !isTempAdminOnTempRoute &&
-            !isUserOnUserRoute
-          ) {
-            const routeToNavigate =
-              role === "admin"
-                ? "/admin"
-                : role === "tempadmin"
-                ? "/tempadmin"
-                : "/home";
-            navigate(routeToNavigate);
-          }
-        }
-
-        setLoading(false);
-      });
-    } else {
-      setLoading(false);
-      // No user data in localStorage, ensure we're on login/signup
-      if (!["/login", "/signup"].includes(location.pathname)) {
-        navigate("/login");
-      }
-    }
-  }, [navigate, location.pathname]);
-
   // Function to check if the current route should show navbar
   const shouldShowNavbar = () => {
-    // Only show navbar for regular users (not admin/tempadmin)
-    if (userRole !== "user") {
-      return false;
-    }
-
-    // Don't show navbar on login/signup pages
-    if (["/login", "/signup"].includes(location.pathname)) {
-      return false;
-    }
-
     // Don't show navbar on admin/tempadmin routes
     if (
       location.pathname.startsWith("/admin") ||
@@ -418,8 +414,8 @@ function App() {
   
     return (
       <>
-        {/* Only show navbar for regular users on appropriate routes */}
-        {user && shouldShowNavbar() && (
+        {/* Show navbar on all routes except admin/tempadmin */}
+        {shouldShowNavbar() && (
           <Navbar user={user} profileImageUrl={profileImageUrl} />
         )}
     
@@ -427,72 +423,84 @@ function App() {
           <Route
             path="/"
             element={
-              user ? (
-                userRole === "admin" ? (
-                  <Navigate to="/admin" />
-                ) : userRole === "tempadmin" ? (
-                  <Navigate to="/tempadmin" />
-                ) : (
-                  <Home />
-                )
+              userRole === "admin" ? (
+                <Navigate to="/admin" />
+              ) : userRole === "tempadmin" ? (
+                <Navigate to="/tempadmin" />
               ) : (
-                <Login />
+                <Xerox />
               )
             }
           />
           <Route path="/login" element={<Login />} />
           <Route path="/product" element={<ProductView />} />
           <Route path="/signup" element={<Signup />} />
-          <Route path="/checkout" element={<Checkout />} />
-          <Route path="/order-detail/:id" element={<OrderDetail />} />
+          <Route 
+            path="/checkout" 
+            element={user ? <Checkout /> : <Navigate to="/login" state={{ from: "/checkout" }} />} 
+          />
+          <Route 
+            path="/order-detail/:id" 
+            element={user ? <OrderDetail /> : <Navigate to="/login" state={{ from: location.pathname }} />} 
+          />
           <Route
             path="/home"
             element={
-              user ? (
-                userRole === "admin" ? (
-                  <Navigate to="/admin" />
-                ) : userRole === "tempadmin" ? (
-                  <Navigate to="/tempadmin" />
-                ) : (
-                  <Home />
-                )
+              userRole === "admin" ? (
+                <Navigate to="/admin" />
+              ) : userRole === "tempadmin" ? (
+                <Navigate to="/tempadmin" />
               ) : (
-                <Login />
+                <Home />
               )
             }
           />
-          <Route path="/shop" element={user ? <Shop /> : <Login />} />
-          <Route path="/success" element={user ? <Success /> : <Login />} />
+          {/* Allow access to Shop without authentication */}
+          <Route path="/shop" element={<Shop />} />
+          <Route 
+            path="/success" 
+            element={user ? <Success /> : <Navigate to="/login" />} 
+          />
           <Route
             path="/edit-profile"
-            element={user ? <EditProfile /> : <Login />}
+            element={user ? <EditProfile /> : <Navigate to="/login" state={{ from: "/edit-profile" }} />}
           />
-          <Route path="/xerox" element={user ? <Xerox /> : <Login />} />
-          <Route path="/payment" element={user ? <Payment /> : <Login />} />
+          {/* Allow access to Xerox without authentication */}
+          <Route path="/xerox" element={<Xerox />} />
+          <Route 
+            path="/payment" 
+            element={user ? <Payment /> : <Navigate to="/login" state={{ from: "/payment" }} />} 
+          />
           <Route
             path="/xeroxordersuser"
-            element={user ? <XeroxOrderUser /> : <Login />}
+            element={user ? <XeroxOrderUser /> : <Navigate to="/login" state={{ from: "/xeroxordersuser" }} />}
           />
           <Route
             path="/OrderedProductpreview/:userId/:orderId"
-            element={user ? <OrderedProductpreview /> : <Login />}
+            element={user ? <OrderedProductpreview /> : <Navigate to="/login" />}
           />
           <Route
             path="/confirm-order"
-            element={user ? <ConfirmOrder /> : <Login />}
+            element={user ? <ConfirmOrder /> : <Navigate to="/login" state={{ from: "/confirm-order" }} />}
           />
           <Route
             path="/ProductOrderUser"
-            element={user ? <ProductOrderUser /> : <Login />}
+            element={user ? <ProductOrderUser /> : <Navigate to="/login" state={{ from: "/ProductOrderUser" }} />}
           />
-          <Route path="/about" element={user ? <About /> : <Login />} />
+          <Route path="/about" element={<About />} />
           <Route
             path="/Xeroxorderpreview"
-            element={user ? <Xeroxorderpreview /> : <Login />}
+            element={user ? <Xeroxorderpreview /> : <Navigate to="/login" />}
           />
-          <Route path="/contact" element={user ? <Contact /> : <Login />} />
-          <Route path="/cart" element={user ? <Cart /> : <Login />} />
-          <Route path="/profile" element={user ? <Profile /> : <Login />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route 
+            path="/cart" 
+            element={user ? <Cart /> : <Navigate to="/login" state={{ from: "/cart" }} />} 
+          />
+          <Route 
+            path="/profile" 
+            element={user ? <Profile /> : <Navigate to="/login" state={{ from: "/profile" }} />} 
+          />
     
           {/* Admin Routes */}
           <Route
@@ -506,17 +514,17 @@ function App() {
               element={<OrderedProductpreviewadmin />}
             />
             <Route
-  path="xeroxallordersadmin"
-  element={<XeroxAllordersAdmin />}
-/>
-<Route
-  path="ProductsAllordersadmin"
-  element={<ProductsAllordersadmin />}
-/>
-<Route
-  path="XeroxAllordersmAdmin"
-  element={<XeroxAllordersmAdmin />}
-/>
+              path="xeroxallordersadmin"
+              element={<XeroxAllordersAdmin />}
+            />
+            <Route
+              path="ProductsAllordersadmin"
+              element={<ProductsAllordersadmin />}
+            />
+            <Route
+              path="XeroxAllordersmAdmin"
+              element={<XeroxAllordersmAdmin />}
+            />
             <Route path="xeroxorderpreview" element={<Xeroxorderpreview />} />
             <Route path="Profileadmin" element={<Profileadmin />} />
             <Route path="tempadmincontrol" element={<Tempadmincontrol />} />
@@ -547,9 +555,9 @@ function App() {
               element={<OrdersControlatempadmin />}
             />
             <Route
-  path="xeroxallordersadmin"
-  element={<XeroxAllordersAdmin />}
-/>
+              path="xeroxallordersadmin"
+              element={<XeroxAllordersAdmin />}
+            />
              <Route
               path="profile"
               element={<ProfileTempadmin />}

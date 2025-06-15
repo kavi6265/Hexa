@@ -60,7 +60,7 @@ function Signup() {
         } else if (tempAdmins.includes(user.email)) {
           navigate("/tempadmin");
         } else {
-          navigate("/home");
+          navigate("/xerox");
         }
       }
     });
@@ -144,7 +144,7 @@ function Signup() {
       } else if (isTempAdmin) {
         navigate("/tempadmin");
       } else {
-        navigate("/home");
+        navigate("/xerox");
       }
     } catch (error) {
       if (error.code === "auth/email-already-in-use") {

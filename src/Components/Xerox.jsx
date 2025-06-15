@@ -1,14 +1,49 @@
 import React, { useState, useEffect } from "react";
 import { PDFDocument } from "pdf-lib";
 import { useNavigate } from "react-router-dom";
+import { auth } from "./firebase"; // Import auth from firebase
 import "../css/Xerox.css";
 
 function Xerox() {
   const [files, setFiles] = useState([]);
   const [totalCost, setTotalCost] = useState(0);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
 
+  // Check authentication status when component mounts
+  useEffect(() => {
+    // Use Firebase auth state to determine if user is logged in
+    const unsubscribe = auth.onAuthStateChanged((currentUser) => {
+      setIsLoggedIn(!!currentUser);
+    });
+
+    // Clean up subscription on unmount
+    return () => unsubscribe();
+  }, []);
+
+  const handleAuthenticatedFileUpload = (e) => {
+    if (e) e.preventDefault();
+    
+    if (!isLoggedIn) {
+      sessionStorage.setItem('redirectAfterLogin', '/xerox');
+      sessionStorage.setItem('loginMessage', 'Please log in to use our Xerox service');
+      navigate('/login');
+      return;
+    }
+    
+    // If logged in, trigger the file input click
+    document.getElementById('file-upload-input').click();
+  };
+
   const handleFileUpload = async (event) => {
+    // Make sure the user is logged in
+    if (!isLoggedIn) {
+      sessionStorage.setItem('redirectAfterLogin', '/xerox');
+      sessionStorage.setItem('loginMessage', 'Please log in to use our Xerox service');
+      navigate('/login');
+      return;
+    }
+
     const uploadedFiles = Array.from(event.target.files);
     
     // Log the files being uploaded for debugging
@@ -186,6 +221,14 @@ function Xerox() {
   };
 
   const handleCheckout = () => {
+    // Check authentication before proceeding to checkout
+    if (!isLoggedIn) {
+      sessionStorage.setItem('redirectAfterLogin', '/xerox');
+      sessionStorage.setItem('loginMessage', 'Please log in to complete your order');
+      navigate('/login');
+      return;
+    }
+    
     // Create a copy of files without the File objects
     const serializableFiles = files.map(fileData => {
       // Create a new object with all properties except 'file'
@@ -292,16 +335,21 @@ function Xerox() {
           </div>
         </div>
       </div>
-      <label className="file-upload-buttonxerox">
-        <input
-          type="file"
-          accept=".pdf,.jpg,.png"
-          multiple
-          onChange={handleFileUpload}
-          className="file-upload-inputxerox"
-        />
+      <button 
+        className="file-upload-buttonxerox"
+        onClick={(e) => handleAuthenticatedFileUpload(e)}
+      >
         <span className="upload-button-textxerox">Upload Files to Begin</span>
-      </label>
+      </button>
+      <input
+        id="file-upload-input"
+        type="file"
+        accept=".pdf,.jpg,.png"
+        multiple
+        onChange={handleFileUpload}
+        className="file-upload-inputxerox"
+        style={{ display: 'none' }}
+      />
     </div>
   );
 
@@ -314,16 +362,23 @@ function Xerox() {
         renderEmptyState()
       ) : (
         // Show file upload button when files exist
-        <label className="file-uploadxerox">
+        <div>
+          <button 
+            className="file-uploadxerox"
+            onClick={(e) => handleAuthenticatedFileUpload(e)}
+          >
+            <span className="file-labelxerox">Click to upload more files</span>
+          </button>
           <input
+            id="file-upload-input"
             type="file"
             accept=".pdf,.jpg,.png"
             multiple
             onChange={handleFileUpload}
             className="file-upload-inputxerox"
+            style={{ display: 'none' }}
           />
-          <span className="file-labelxerox">Click to upload more files</span>
-        </label>
+        </div>
       )}
 
       {files.map((fileData, index) => (

@@ -7,6 +7,8 @@ import "../css/Payment.css";
 function Payment() {
   const [address, setAddress] = useState("");
   const [isAddressSelected, setIsAddressSelected] = useState(false);
+  const [selectedDeliveryTime, setSelectedDeliveryTime] = useState("");
+  const [deliveryTimeSlots, setDeliveryTimeSlots] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [orderInfo, setOrderInfo] = useState(null);
@@ -35,7 +37,133 @@ function Payment() {
     
     // Fetch user's address from database
     fetchUserAddress();
+    
+    // Generate delivery time slots based on current time
+    generateDeliveryTimeSlots();
   }, [location, navigate]);
+  
+  const generateDeliveryTimeSlots = () => {
+    const now = new Date();
+    const currentHour = now.getHours();
+    const timeSlots = [];
+    
+    // Helper function to get day label
+    const getDayLabel = (daysFromToday) => {
+      if (daysFromToday === 0) return "Today";
+      if (daysFromToday === 1) return "Tomorrow";
+      const date = new Date(Date.now() + daysFromToday * 24 * 60 * 60 * 1000);
+      return date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+    };
+    
+    // Time slot definitions
+    const morningSlot = "8:30 AM to 9:30 AM";
+    const afternoonSlot = "12:30 PM to 2:00 PM";
+    const eveningSlot = "4:00 PM to 5:00 PM";
+    
+    // Logic based on current time
+    if (currentHour < 9) {
+      // Before 9 AM - show today afternoon and evening, plus tomorrow all slots
+      timeSlots.push({
+        id: 'today-afternoon',
+        label: `${afternoonSlot} (${getDayLabel(0)})`,
+        value: `${afternoonSlot} - ${getDayLabel(0)}`,
+        date: new Date().toDateString()
+      });
+      timeSlots.push({
+        id: 'today-evening',
+        label: `${eveningSlot} (${getDayLabel(0)})`,
+        value: `${eveningSlot} - ${getDayLabel(0)}`,
+        date: new Date().toDateString()
+      });
+      
+      // Add tomorrow's all slots
+      timeSlots.push({
+        id: 'tomorrow-morning',
+        label: `${morningSlot} (${getDayLabel(1)})`,
+        value: `${morningSlot} - ${getDayLabel(1)}`,
+        date: new Date(Date.now() + 24 * 60 * 60 * 1000).toDateString()
+      });
+      timeSlots.push({
+        id: 'tomorrow-afternoon',
+        label: `${afternoonSlot} (${getDayLabel(1)})`,
+        value: `${afternoonSlot} - ${getDayLabel(1)}`,
+        date: new Date(Date.now() + 24 * 60 * 60 * 1000).toDateString()
+      });
+      timeSlots.push({
+        id: 'tomorrow-evening',
+        label: `${eveningSlot} (${getDayLabel(1)})`,
+        value: `${eveningSlot} - ${getDayLabel(1)}`,
+        date: new Date(Date.now() + 24 * 60 * 60 * 1000).toDateString()
+      });
+      
+    } else if (currentHour >= 9 && currentHour < 12) {
+      // Between 9 AM to 12 PM - show today evening and tomorrow all slots
+      timeSlots.push({
+        id: 'today-evening',
+        label: `${eveningSlot} (${getDayLabel(0)})`,
+        value: `${eveningSlot} - ${getDayLabel(0)}`,
+        date: new Date().toDateString()
+      });
+      
+      // Add tomorrow's all slots
+      timeSlots.push({
+        id: 'tomorrow-morning',
+        label: `${morningSlot} (${getDayLabel(1)})`,
+        value: `${morningSlot} - ${getDayLabel(1)}`,
+        date: new Date(Date.now() + 24 * 60 * 60 * 1000).toDateString()
+      });
+      timeSlots.push({
+        id: 'tomorrow-afternoon',
+        label: `${afternoonSlot} (${getDayLabel(1)})`,
+        value: `${afternoonSlot} - ${getDayLabel(1)}`,
+        date: new Date(Date.now() + 24 * 60 * 60 * 1000).toDateString()
+      });
+      timeSlots.push({
+        id: 'tomorrow-evening',
+        label: `${eveningSlot} (${getDayLabel(1)})`,
+        value: `${eveningSlot} - ${getDayLabel(1)}`,
+        date: new Date(Date.now() + 24 * 60 * 60 * 1000).toDateString()
+      });
+      
+    } else if (currentHour >= 12 && currentHour < 19) {
+      // Between 12 PM to 7 PM - show tomorrow morning onwards (all tomorrow slots)
+      timeSlots.push({
+        id: 'tomorrow-morning',
+        label: `${morningSlot} (${getDayLabel(1)})`,
+        value: `${morningSlot} - ${getDayLabel(1)}`,
+        date: new Date(Date.now() + 24 * 60 * 60 * 1000).toDateString()
+      });
+      timeSlots.push({
+        id: 'tomorrow-afternoon',
+        label: `${afternoonSlot} (${getDayLabel(1)})`,
+        value: `${afternoonSlot} - ${getDayLabel(1)}`,
+        date: new Date(Date.now() + 24 * 60 * 60 * 1000).toDateString()
+      });
+      timeSlots.push({
+        id: 'tomorrow-evening',
+        label: `${eveningSlot} (${getDayLabel(1)})`,
+        value: `${eveningSlot} - ${getDayLabel(1)}`,
+        date: new Date(Date.now() + 24 * 60 * 60 * 1000).toDateString()
+      });
+      
+    } else {
+      // After 7 PM - show tomorrow afternoon onwards
+      timeSlots.push({
+        id: 'tomorrow-afternoon',
+        label: `${afternoonSlot} (${getDayLabel(1)})`,
+        value: `${afternoonSlot} - ${getDayLabel(1)}`,
+        date: new Date(Date.now() + 24 * 60 * 60 * 1000).toDateString()
+      });
+      timeSlots.push({
+        id: 'tomorrow-evening',
+        label: `${eveningSlot} (${getDayLabel(1)})`,
+        value: `${eveningSlot} - ${getDayLabel(1)}`,
+        date: new Date(Date.now() + 24 * 60 * 60 * 1000).toDateString()
+      });
+    }
+    
+    setDeliveryTimeSlots(timeSlots);
+  };
   
   const fetchUserAddress = async () => {
     try {
@@ -80,6 +208,10 @@ function Payment() {
     }
   };
   
+  const handleDeliveryTimeChange = (timeSlot) => {
+    setSelectedDeliveryTime(timeSlot.value);
+  };
+  
   const handleGoBack = () => {
     // Show confirmation dialog
     if (window.confirm("Are you sure you want to go back to the main screen?")) {
@@ -112,15 +244,16 @@ function Payment() {
         totalAmount: totalAmount,
         paidAmount: 0,
         balanceAmount: totalAmount,
-        timestamp: Date.now()
+        timestamp: Date.now(),
+        deliveryTime: selectedDeliveryTime
       };
       
       // Save order details to database
       const orderScreenshotsRef = dbRef(database, `uploadscreenshots/${orderId}`);
       await set(orderScreenshotsRef, orderDetails);
       
-      // Update paid status for all files
-      updatePaidStatusForAllFiles(orderId);
+      // Update delivery time for all files
+      await updateDeliveryTimeForAllFiles(orderId);
       
       // Navigate to success page
       navigate('/success');
@@ -132,7 +265,7 @@ function Payment() {
     }
   };
   
-  const updatePaidStatusForAllFiles = async (orderId) => {
+  const updateDeliveryTimeForAllFiles = async (orderId) => {
     try {
       const userId = auth.currentUser?.uid;
       if (!userId) return;
@@ -141,12 +274,18 @@ function Payment() {
       const snapshot = await get(filesRef);
       
       if (snapshot.exists()) {
+        const updatePromises = [];
         snapshot.forEach((fileSnapshot) => {
-          update(fileSnapshot.ref, { paid: true });
+          const updateData = {
+            deliveryTime: selectedDeliveryTime
+          };
+          updatePromises.push(update(fileSnapshot.ref, updateData));
         });
+        
+        await Promise.all(updatePromises);
       }
     } catch (error) {
-      console.error("Error updating paid status:", error);
+      console.error("Error updating paid status and delivery time:", error);
     }
   };
   
@@ -158,6 +297,11 @@ function Payment() {
     
     if (!isAddressSelected) {
       setError("Please select the address");
+      return false;
+    }
+    
+    if (!selectedDeliveryTime) {
+      setError("Please select a delivery time");
       return false;
     }
     
@@ -194,6 +338,27 @@ function Payment() {
               onChange={() => setIsAddressSelected(!isAddressSelected)}
             />
             <label htmlFor="confirmAddress">Confirm this address for delivery</label>
+          </div>
+        </div>
+        
+        <div className="delivery-time-section">
+          <h3>Select Delivery Time</h3>
+          <div className="time-slots">
+            {deliveryTimeSlots.map((timeSlot) => (
+              <div key={timeSlot.id} className="time-slot-option">
+                <input
+                  type="radio"
+                  id={timeSlot.id}
+                  name="deliveryTime"
+                  value={timeSlot.value}
+                  checked={selectedDeliveryTime === timeSlot.value}
+                  onChange={() => handleDeliveryTimeChange(timeSlot)}
+                />
+                <label htmlFor={timeSlot.id} className="time-slot-label">
+                  {timeSlot.label}
+                </label>
+              </div>
+            ))}
           </div>
         </div>
         

@@ -11,7 +11,8 @@ function Xeroxorderpreview() {
     deliveryAmount: '',
     paid: false,
     delivered: false,
-    address: ''
+    address: '',
+    deliveryTime: '' // Added deliveryTime field
   });
   const [files, setFiles] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -48,7 +49,8 @@ function Xeroxorderpreview() {
           deliveryAmount: '',
           paid: false,
           delivered: false,
-          address: ''
+          address: '',
+          deliveryTime: '' // Initialize deliveryTime
         });
         
         // Determine which user ID to use for fetching PDF data
@@ -57,14 +59,16 @@ function Xeroxorderpreview() {
         const pdfsRef = ref(database, `pdfs/${userIdToUse}/${orderId}`);
         const pdfsSnapshot = await get(pdfsRef);
         
-        // Fetch address from uploadscreenshots reference
+        // Fetch address and deliveryTime from uploadscreenshots reference
         const uploadScreenshotsRef = ref(database, `uploadscreenshots/${orderId}`);
         const uploadScreenshotsSnapshot = await get(uploadScreenshotsRef);
         
         let address = '';
+        let deliveryTime = ''; // Added deliveryTime variable
         if (uploadScreenshotsSnapshot.exists()) {
           const screenshotData = uploadScreenshotsSnapshot.val();
           address = screenshotData.address || '';
+          deliveryTime = screenshotData.deliveryTime || 'Not specified'; // Get deliveryTime
         }
         
         const filesList = [];
@@ -86,7 +90,8 @@ function Xeroxorderpreview() {
                 deliveryAmount: fileData.deliveyamt0 || 'Free',
                 paid: fileData.paid || false,
                 delivered: fileData.delivered || false,
-                address: address // Set the address from uploadscreenshots
+                address: address, // Set the address from uploadscreenshots
+                deliveryTime: deliveryTime // Set the delivery time from uploadscreenshots
               });
             }
             
@@ -170,6 +175,10 @@ function Xeroxorderpreview() {
           </div>
           <div className="order-detail-item address-item">
             <span>Delivery Address:</span> {orderDetails.address || 'Not provided'}
+          </div>
+          {/* Added Delivery Time Display */}
+          <div className="order-detail-item delivery-time-item">
+            <span>Delivery Time:</span> {orderDetails.deliveryTime || 'Not specified'}
           </div>
         </div>
       </div>

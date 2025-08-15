@@ -16,7 +16,8 @@ function XeroxOrderpreviewtempadmin() {
     delivered: false,
     address: '',
     userId: '',
-    phoneNumber: ''
+    phoneNumber: '',
+    deliveryTime: '' // Added deliveryTime field
   });
   const [files, setFiles] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -59,7 +60,8 @@ function XeroxOrderpreviewtempadmin() {
           delivered: false,
           address: '',
           userId: userId || '',
-          phoneNumber: ''
+          phoneNumber: '',
+          deliveryTime: '' // Initialize deliveryTime
         });
         
         if (userId && orderId) {
@@ -77,15 +79,16 @@ function XeroxOrderpreviewtempadmin() {
           const pdfsRef = ref(database, `pdfs/${userId}/${orderId}`);
           const pdfsSnapshot = await get(pdfsRef);
           
-          // FIX: Correctly fetch address from two possible locations
-          // First try from uploadscreenshots reference
+          // FIX: Correctly fetch address and deliveryTime from uploadscreenshots reference
           let address = '';
+          let deliveryTime = ''; // Added deliveryTime variable
           const uploadScreenshotsRef = ref(database, `uploadscreenshots/${orderId}`);
           const uploadScreenshotsSnapshot = await get(uploadScreenshotsRef);
           
           if (uploadScreenshotsSnapshot.exists()) {
             const screenshotData = uploadScreenshotsSnapshot.val();
             address = screenshotData.address || '';
+            deliveryTime = screenshotData.deliveryTime || 'Not specified'; // Get deliveryTime
           }
           
           // If address is still empty, try from orders reference as fallback
@@ -121,7 +124,8 @@ function XeroxOrderpreviewtempadmin() {
                   delivered: fileData.delivered || false,
                   address: address, // Set the address we fetched
                   userId: userId || '',
-                  phoneNumber: phoneNumber // Add the phone number
+                  phoneNumber: phoneNumber, // Add the phone number
+                  deliveryTime: deliveryTime // Add the delivery time
                 });
               }
               
@@ -332,6 +336,12 @@ function XeroxOrderpreviewtempadmin() {
             <div className="order-detail-itemi address-itemi">
               <span className="detail-labeli">Delivery Address:</span> 
               <span className="detail-valuei addressi">{orderDetails.address || 'Not provided'}</span>
+            </div>
+            
+            {/* Added Delivery Time Display */}
+            <div className="order-detail-itemi delivery-time-itemi">
+              <span className="detail-labeli">Delivery Time:</span> 
+              <span className="detail-valuei delivery-timei">{orderDetails.deliveryTime || 'Not specified'}</span>
             </div>
           </div>
           

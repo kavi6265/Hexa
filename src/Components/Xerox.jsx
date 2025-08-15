@@ -8,6 +8,7 @@ function Xerox() {
   const [files, setFiles] = useState([]);
   const [totalCost, setTotalCost] = useState(0);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [showPreview, setShowPreview] = useState({}); // Track which preview is open
   const navigate = useNavigate();
 
   // Check authentication status when component mounts
@@ -20,6 +21,20 @@ function Xerox() {
     // Clean up subscription on unmount
     return () => unsubscribe();
   }, []);
+
+  // Function to toggle preview modal
+  const togglePreview = (fileIndex, ratioType) => {
+    const key = `${fileIndex}-${ratioType}`;
+    setShowPreview(prev => ({
+      ...prev,
+      [key]: !prev[key]
+    }));
+  };
+
+  // Function to close all previews when clicking outside
+  const closeAllPreviews = () => {
+    setShowPreview({});
+  };
 
   const handleAuthenticatedFileUpload = (e) => {
     if (e) e.preventDefault();
@@ -270,6 +285,80 @@ function Xerox() {
     navigate('/confirm-order');
   };
 
+  // Component to render preview modal
+  const PreviewModal = ({ isOpen, onClose, ratioType, fileIndex }) => {
+    if (!isOpen) return null;
+
+    const getPreviewContent = () => {
+      if (ratioType === "1:1") {
+        return (
+          <div className="preview-content">
+            <h3>1:1 Ratio (Single Side Printing)</h3>
+            <div className="preview-image-container">
+              <img 
+                src="/onebyone.png" 
+                alt="1:1 Ratio - Single Side Printing" 
+                className="ratio-preview-image"
+                onError={(e) => {
+                  e.target.style.display = 'none';
+                  e.target.nextSibling.style.display = 'block';
+                }}
+              />
+              <div className="image-fallback" style={{ display: 'none' }}>
+                <div className="fallback-text">📄 Single Side Printing</div>
+                <div className="fallback-description">Image not available</div>
+              </div>
+            </div>
+            <p className="preview-description">
+              Each page of your document is printed on one side of the paper. 
+              For a 2-page document, you'll get 2 sheets of paper.
+            </p>
+            <div className="pricing-info">
+              <strong>A4 B&W: ₹1.30 per page</strong>
+            </div>
+          </div>
+        );
+      } else {
+        return (
+          <div className="preview-content">
+            <h3>1:2 Ratio (Double Side Printing)</h3>
+            <div className="preview-image-container">
+              <img 
+                src="/onebytwo.png" 
+                alt="1:2 Ratio - Double Side Printing" 
+                className="ratio-preview-image"
+                onError={(e) => {
+                  e.target.style.display = 'none';
+                  e.target.nextSibling.style.display = 'block';
+                }}
+              />
+              <div className="image-fallback" style={{ display: 'none' }}>
+                <div className="fallback-text">📄 Double Side Printing</div>
+                <div className="fallback-description">Image not available</div>
+              </div>
+            </div>
+            <p className="preview-description">
+              Two pages of your document are printed on both sides of one sheet. 
+              For a 2-page document, you'll get 1 sheet of paper (front & back).
+            </p>
+            <div className="pricing-info">
+              <strong>A4 B&W: ₹0.75 per page (50% savings!)</strong>
+            </div>
+          </div>
+        );
+      }
+    };
+
+    return (
+      <div className="preview-modal-overlay" onClick={onClose}>
+        <div className="preview-modal" onClick={(e) => e.stopPropagation()}>
+          <button className="preview-close-btn" onClick={onClose}>×</button>
+          {getPreviewContent()}
+        </div>
+      </div>
+    );
+  };
+
   // Empty state UI when no files are selected
   const renderEmptyState = () => (
     <div className="empty-statexerox">
@@ -432,14 +521,34 @@ function Xerox() {
 
             <div className="select-containerxerox">
               <label className="select-labelxerox">Print Ratio</label>
-              <select
-                className="select-inputxerox"
-                value={fileData.ratio}
-                onChange={(e) => handleChange(index, "ratio", e.target.value)}
-              >
-                <option value="1:1">1:1 (Single Side)</option>
-                <option value="1:2">1:2 (Double Side)</option>
-              </select>
+              <div className="ratio-select-with-preview">
+                <select
+                  className="select-inputxerox"
+                  value={fileData.ratio}
+                  onChange={(e) => handleChange(index, "ratio", e.target.value)}
+                >
+                  <option value="1:1">1:1 (Single Side)</option>
+                  <option value="1:2">1:2 (Double Side)</option>
+                </select>
+                <div className="ratio-preview-buttons">
+                  <button
+                    type="button"
+                    className="preview-eye-btn"
+                    onClick={() => togglePreview(index, "1:1")}
+                    title="Preview 1:1 ratio"
+                  >
+                    👁️
+                  </button>
+                  <button
+                    type="button"
+                    className="preview-eye-btn"
+                    onClick={() => togglePreview(index, "1:2")}
+                    title="Preview 1:2 ratio"
+                  >
+                    👁️
+                  </button>
+                </div>
+              </div>
             </div>
 
             <div className="select-containerxerox">
@@ -478,6 +587,20 @@ function Xerox() {
               <span className="price-valuexerox">₹{fileData.finalAmount.toFixed(2)}</span>
             </div>
           </div>
+
+          {/* Preview Modals for this file */}
+          <PreviewModal
+            isOpen={showPreview[`${index}-1:1`]}
+            onClose={() => togglePreview(index, "1:1")}
+            ratioType="1:1"
+            fileIndex={index}
+          />
+          <PreviewModal
+            isOpen={showPreview[`${index}-1:2`]}
+            onClose={() => togglePreview(index, "1:2")}
+            ratioType="1:2"
+            fileIndex={index}
+          />
         </div>
       ))}
 
@@ -498,6 +621,178 @@ function Xerox() {
           </button>
         </div>
       )}
+
+      {/* Global backdrop for closing all previews */}
+      {Object.values(showPreview).some(Boolean) && (
+        <div 
+          className="global-backdrop" 
+          onClick={closeAllPreviews}
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            zIndex: 999,
+            display: 'none' // Hidden by default, handled by individual modals
+          }}
+        />
+      )}
+
+      <style jsx>{`
+        .ratio-select-with-preview {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          position: relative;
+        }
+
+        .ratio-preview-buttons {
+          display: flex;
+          gap: 4px;
+        }
+
+        .preview-eye-btn {
+          background: none;
+          border: 1px solid #ddd;
+          border-radius: 4px;
+          padding: 4px 6px;
+          cursor: pointer;
+          font-size: 12px;
+          transition: all 0.2s;
+          height: 28px;
+          width: 28px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .preview-eye-btn:hover {
+          background-color: #f0f0f0;
+          border-color: #999;
+        }
+
+        .preview-modal-overlay {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background-color: rgba(0, 0, 0, 0.7);
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          z-index: 1000;
+          padding: 20px;
+        }
+
+        .preview-modal {
+          background: white;
+          border-radius: 12px;
+          padding: 24px;
+          max-width: 500px;
+          width: 100%;
+          max-height: 80vh;
+          overflow-y: auto;
+          position: relative;
+          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .preview-close-btn {
+          position: absolute;
+          top: 12px;
+          right: 12px;
+          background: none;
+          border: none;
+          font-size: 24px;
+          cursor: pointer;
+          color: #666;
+          width: 32px;
+          height: 32px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 50%;
+          transition: all 0.2s;
+        }
+
+        .preview-close-btn:hover {
+          background-color: #f0f0f0;
+          color: #333;
+        }
+
+        .preview-content h3 {
+          margin: 0 0 16px 0;
+          color: #333;
+          font-size: 20px;
+        }
+
+        .preview-image-container {
+          margin: 16px 0;
+          display: flex;
+          justify-content: center;
+        }
+
+        .ratio-preview-image {
+          max-width: 100%;
+          max-height: 300px;
+          object-fit: contain;
+          border-radius: 8px;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .image-fallback {
+          text-align: center;
+          padding: 40px 20px;
+          background: #f5f5f5;
+          border-radius: 8px;
+          border: 2px dashed #ddd;
+        }
+
+        .fallback-text {
+          font-size: 24px;
+          margin-bottom: 8px;
+        }
+
+        .fallback-description {
+          color: #666;
+          font-size: 14px;
+        }
+
+        .preview-description {
+          margin: 16px 0;
+          color: #666;
+          line-height: 1.5;
+          text-align: center;
+        }
+
+        .pricing-info {
+          background: #e8f5e8;
+          padding: 12px;
+          border-radius: 8px;
+          text-align: center;
+          color: #2d5a2d;
+          margin-top: 16px;
+        }
+
+        @media (max-width: 768px) {
+          .ratio-select-with-preview {
+            flex-direction: column;
+            align-items: stretch;
+          }
+          
+          .ratio-preview-buttons {
+            justify-content: center;
+            margin-top: 8px;
+          }
+          
+          .preview-modal {
+            margin: 10px;
+            padding: 20px;
+          }
+        }
+      `}</style>
     </div>
   );
 }

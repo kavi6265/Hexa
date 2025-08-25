@@ -558,7 +558,7 @@ function Xerox() {
                 className="select-inputxerox"
                 min="1"
                 value={fileData.quantity}
-                onChange={(e) => handleChange(index, "quantity", parseInt(e.target.value) || 1)}
+                onChange={(e) => handleChange(index, "quantity", parseInt(e.target.value))}
               />
             </div>
 

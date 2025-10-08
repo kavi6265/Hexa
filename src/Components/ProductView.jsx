@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+<<<<<<< HEAD
 import { database, auth } from "./firebase";
 import { ref, push, set, onValue } from "firebase/database";
 import "../css/ProductView.css";
@@ -7,6 +8,15 @@ import "../css/ProductView.css";
 // Image ID mapping
 const IMAGE_ID_MAPPING = {
     "2131230840": "about_us.png",
+=======
+import { database, auth } from "./firebase"; // Make sure this path is correct
+import { ref, push, set, onValue } from "firebase/database";
+import "../css/ProductView.css";
+
+// Image ID mapping - define this at the top of your file
+const IMAGE_ID_MAPPING = {
+  "2131230840": "about_us.png",
+>>>>>>> 05bb7da93d7c9f4b56c1121855e32934ac4bad2f
   "2131230841": "afoursheet.png",
   "2131230842": "athreenote.png",
   "2131230843": "athreenotee.jpg",
@@ -142,6 +152,7 @@ const IMAGE_ID_MAPPING = {
   "2131231162": "whiteblack_bg.png",
   "2131231163": "women1.png",
   "2131231164": "xoblue.png",
+<<<<<<< HEAD
   "2131231165": "xooblack.png",
 };
 
@@ -459,3 +470,417 @@ function ProductView() {
 }
 
 export default ProductView;
+=======
+  "2131231165": "xooblack.png"
+};
+
+function ProductView() {
+    const location = useLocation();
+    const product = location.state?.product;
+    const navigate = useNavigate();
+    const [quantity, setQuantity] = useState(1);
+    const [showToast, setShowToast] = useState(false);
+    const [toastMessage, setToastMessage] = useState("");
+    const [currentUser, setCurrentUser] = useState(null);
+    const [cartItems, setCartItems] = useState([]);
+    const [showCartPreview, setShowCartPreview] = useState(false);
+    const [cartCount, setCartCount] = useState(0);
+    const [isInCart, setIsInCart] = useState(false);
+    
+    // Listen for auth state changes
+    useEffect(() => {
+        const unsubscribe = auth.onAuthStateChanged(user => {
+            setCurrentUser(user);
+            if (user) {
+                // Fetch cart items
+                const cartRef = ref(database, `userscart/${user.uid}`);
+                onValue(cartRef, (snapshot) => {
+                    const data = snapshot.val();
+                    if (data) {
+                        const items = Object.values(data);
+                        setCartItems(items);
+                        setCartCount(items.length);
+                        
+                        // Check if current product is in cart
+                        if (product) {
+                            const productInCart = items.some(item => 
+                                item.productname === product.name
+                            );
+                            setIsInCart(productInCart);
+                        }
+                    } else {
+                        setCartItems([]);
+                        setCartCount(0);
+                        setIsInCart(false);
+                    }
+                });
+            }
+        });
+        
+        return () => unsubscribe();
+    }, [product]);
+    
+    if (!product) {
+      return (
+        <div className="product-not-found section-p1">
+          <h2>Product not found</h2>
+          <button className="normal" onClick={() => navigate("/")}>Return to Shop</button>
+        </div>
+      );
+    }
+
+    const handleProductClick = (product) => {
+        navigate("/product", { state: { product } });
+    };
+    
+    const handleQuantityChange = (e) => {
+        const value = parseInt(e.target.value);
+        if (value > 0) {
+            setQuantity(value);
+        }
+    };
+    
+    // Get image ID from filename
+    const getImageIdFromPath = (imagePath) => {
+        // Extract the filename from the path
+        const parts = imagePath.split('/');
+        const fileName = parts[parts.length - 1];
+        
+        // Find the ID that corresponds to this filename
+        for (const [id, img] of Object.entries(IMAGE_ID_MAPPING)) {
+            if (img === fileName) {
+                return parseInt(id, 10);
+            }
+        }
+        
+        // Default ID if not found
+        return 2131231165; // Default to xooblack.png
+    };
+    
+    // Check if product is already in cart
+    const checkIfProductInCart = (productToCheck) => {
+        return cartItems.some(item => item.productname === productToCheck.name);
+    };
+    
+    const addToCart = (productToAdd = product, productQty = quantity) => {
+        if (!currentUser) {
+            navigate("/login");
+            return;
+        }
+        
+        // Check if product is already in cart
+        const productInCart = checkIfProductInCart(productToAdd);
+        
+        if (productInCart) {
+            setToastMessage(`${productToAdd.name} is already in your cart!`);
+            showNotification();
+            return;
+        }
+        
+        // Create a reference to the user's cart
+        const cartRef = ref(database, `userscart/${currentUser.uid}`);
+        const newItemRef = push(cartRef);
+        
+        // Prepare item data
+        const itemData = {
+            key: newItemRef.key,
+            productname: productToAdd.name,
+            productamt: productToAdd.price.replace('₹', ''), // Remove currency symbol
+            productimage: getImageIdFromPath(productToAdd.img),
+            qty: productQty,
+            rating: 0,
+            discription: productToAdd.description || `Brand: ${productToAdd.brand} Theme: Plain`
+        };
+        
+        // Add to Firebase
+        set(newItemRef, itemData)
+            .then(() => {
+                setToastMessage(`${productToAdd.name} added to cart!`);
+                showNotification();
+                setShowCartPreview(true); // Show cart preview
+                setTimeout(() => setShowCartPreview(false), 5000); // Hide after 5 seconds
+                setIsInCart(true); // Update state to reflect product is now in cart
+            })
+            .catch(error => {
+                console.error("Error adding to cart:", error);
+                alert("Failed to add item to cart. Please try again.");
+            });
+    };
+    
+    const showNotification = () => {
+        setShowToast(true);
+        setTimeout(() => {
+            setShowToast(false);
+        }, 3000);
+    };
+    
+    // Add featured product directly to cart
+    const addFeaturedToCart = (e, featuredProduct) => {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        // Check if product is already in cart
+        const productInCart = checkIfProductInCart(featuredProduct);
+        
+        if (productInCart) {
+            setToastMessage(`${featuredProduct.name} is already in your cart!`);
+            showNotification();
+            return;
+        }
+        
+        addToCart(featuredProduct, 1); // Add quantity 1 by default
+    };
+    
+    // Function to get image paths with proper prefixes
+    const getImagePath = (imgName) => {
+        if (!imgName) return "";
+        // If the path already includes http or / then return as is
+        if (imgName.startsWith('http') || imgName.startsWith('/')) {
+            return imgName;
+        }
+        // Otherwise, add the leading slash for public directory
+        return `/${imgName}`;
+    };
+
+    // Navigate to cart page
+    const goToCart = () => {
+        navigate("/cart");
+    };
+
+    // Featured products data
+    const featuredProducts = [
+        { img: "xooblack.png", brand: "Hauser", name: "XO Ball Pen - Black Ink", price: "₹10" },
+        { img: "xoblue.png", brand: "Hauser", name: "XO Ball Pen - Blue Ink", price: "₹10" },
+        { img: "stylishpenblue.jpg", brand: "Stylish", name: "X3 Ball Pen - Blue (0.7mm)", price: "₹7" },
+        { img: "stylishblackpen.png", brand: "Stylish", name: "X3 Ball Pen - Black (0.7mm)", price: "₹7" },
+    ];
+
+    return (
+        <div>
+            {/* Header with cart count */}
+            <div className="product-header">
+                <div className="cart-icon-container" onClick={goToCart}>
+                    <i className="bx bx-cart"></i>
+                    {cartCount > 0 && <span className="cart-count">{cartCount}</span>}
+                </div>
+            </div>
+            
+            {/* Toast notification */}
+            <div className={`toast ${showToast ? 'show' : ''}`}>
+                <i className={`bx ${toastMessage.includes('already') ? 'bx-info-circle' : 'bx-check-circle'}`}></i>
+                <span>{toastMessage}</span>
+            </div>
+            
+            {/* Cart Preview Overlay */}
+            {showCartPreview && (
+                <div className="cart-preview-overlay">
+                    <div className="cart-preview">
+                        <div className="cart-preview-header">
+                            <h3>Cart Preview</h3>
+                            <i className="bx bx-x" onClick={() => setShowCartPreview(false)}></i>
+                        </div>
+                        <div className="cart-preview-items">
+                            {cartItems.slice(-3).map((item, index) => (
+                                <div className="cart-preview-item" key={index}>
+                                    <div className="cart-preview-img">
+                                        <img 
+                                            src={`/${IMAGE_ID_MAPPING[item.productimage]}`} 
+                                            alt={item.productname}
+                                            onError={(e) => {
+                                                e.target.onerror = null;
+                                                e.target.src = "/unknowenprofile.png";
+                                            }}
+                                        />
+                                    </div>
+                                    <div className="cart-preview-details">
+                                        <h4>{item.productname}</h4>
+                                        <p>₹{item.productamt} x {item.qty}</p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                        <div className="cart-preview-footer">
+                            <span>{cartItems.length} items in cart</span>
+                            <button className="normal" onClick={goToCart}>View Cart</button>
+                        </div>
+                    </div>
+                </div>
+            )}
+            
+            <section id="prodetails" className="section-p1">
+                <div className="single-pro-image">
+                    <img 
+                        src={getImagePath(product.img)} 
+                        width="100%" 
+                        id="MainImg" 
+                        alt={product.name || "Product"} 
+                        onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = "/unknowenprofile.png";
+                        }}
+                    />
+                    <div className="small-img-group">
+                        {[...Array(4)].map((_, index) => (
+                            <div className="small-img-col" key={index}>
+                                <img 
+                                    src={getImagePath(product.img)} 
+                                    width="100%" 
+                                    className="small-img" 
+                                    alt="Product thumbnail"
+                                    onError={(e) => {
+                                        e.target.onerror = null;
+                                        e.target.src = "/unknowenprofile.png";
+                                    }}
+                                />
+                            </div>
+                        ))}
+                    </div>
+                </div>
+                
+                <div className="single-pro-details">
+                    <h6>Home / {product.brand || "Category"}</h6>
+                    <h4>{product.name || "Product Name"}</h4>
+                    <div className="price-container">
+                        <h3>{product.price || "Price"}</h3>
+                    </div>
+                    
+                    <div className="add-to-cart-container">
+                        <div className="quantity-controls">
+                            <button 
+                                className="quantity-btn" 
+                                onClick={() => setQuantity(prev => prev > 1 ? prev - 1 : 1)}
+                                disabled={isInCart}
+                            >-</button>
+                            <input 
+                                type="number" 
+                                value={quantity} 
+                                onChange={handleQuantityChange} 
+                                min="1"
+                                disabled={isInCart}
+                            />
+                            <button 
+                                className="quantity-btn" 
+                                onClick={() => setQuantity(prev => prev + 1)}
+                                disabled={isInCart}
+                            >+</button>
+                        </div>
+                        {isInCart ? (
+                            <button className="normal in-cart-btn" onClick={goToCart}>
+                                <i className="bx bx-check"></i> Already in Cart - View Cart
+                            </button>
+                        ) : (
+                            <button className="normal add-cart-btn" onClick={() => addToCart()}>
+                                <i className="bx bx-cart-add"></i> Add To Cart
+                            </button>
+                        )}
+                    </div>
+                    
+                    <div className="product-info">
+                        <h4>Product Details</h4>
+                        <span>{product.description || "No description available"}</span>
+                    </div>
+                    
+                    <div className="product-features">
+                        <div className="feature">
+                            <i className="bx bx-check"></i>
+                            <span>Quality Assurance</span>
+                        </div>
+                        <div className="feature">
+                            <i className="bx bx-check"></i>
+                            <span>Fast Delivery</span>
+                        </div>
+                        <div className="feature">
+                            <i className="bx bx-check"></i>
+                            <span>Easy Returns</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="product1" className="section-p1">
+                <h2>Featured Products</h2>
+                <p>Stationary Products</p>
+                <div className="pro-container">
+                    {featuredProducts.map((item, index) => {
+                        const featuredProductInCart = checkIfProductInCart(item);
+                        return (
+                            <div className="pro" key={index} onClick={() => handleProductClick(item)}>
+                                <img 
+                                    className="shirt" 
+                                    src={getImagePath(item.img)} 
+                                    alt={item.name}
+                                    onError={(e) => {
+                                        e.target.onerror = null;
+                                        e.target.src = "/unknowenprofile.png";
+                                    }}
+                                />
+                                <div className="des">
+                                    <span>{item.brand}</span>
+                                    <h5>{item.name}</h5>
+                                    <div className="price-tag">
+                                        <h4>{item.price}</h4>
+                                    </div>
+                                </div>
+                                {featuredProductInCart ? (
+                                    <a href="#" onClick={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        setToastMessage(`${item.name} is already in your cart!`);
+                                        showNotification();
+                                    }}>
+                                        <i className="bx bx-check cart-added"></i>
+                                    </a>
+                                ) : (
+                                    <a href="#" onClick={(e) => addFeaturedToCart(e, item)}>
+                                        <i className="bx bx-cart cart"></i>
+                                    </a>
+                                )}
+                            </div>
+                        );
+                    })}
+                </div>
+            </section>
+            
+            <footer className="section-p1">
+                <div className="col">
+                    <h3>Jasa Essential</h3>
+                    <h4>Contact</h4>
+                    <p><strong>Address:</strong> 562 Wellington Road, Street 32, San Francisco</p>
+                    <p><strong>Phone:</strong> +01 2222 345 / (+91) 0 123 456 789</p>
+                    <p><strong>Hours:</strong> 10:00 - 18:00, Mon - Sat</p>
+                    <div className="follow">
+                        <h4>Follow us</h4>
+                        <div className="icon">
+                            <i className="bx bxl-facebook"></i>
+                            <i className="bx bxl-twitter"></i>
+                            <i className="bx bxl-instagram"></i>
+                            <i className="bx bxl-pinterest-alt"></i>
+                            <i className="bx bxl-youtube"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div className="col">
+                    <h4>About</h4>
+                    <a href="#">About us</a>
+                    <a href="#">Delivery Information</a>
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms & Conditions</a>
+                    <a href="#">Contact Us</a>
+                </div>
+                
+                <div className="col">
+                    <h4>My Account</h4>
+                    <a href="#">Sign In</a>
+                    <a href="#" onClick={goToCart}>View Cart</a>
+                    <a href="#">My Wishlist</a>
+                    <a href="#">Track My Order</a>
+                    <a href="#">Help</a>
+                </div>
+            </footer>
+        </div>
+    );
+}
+
+export default ProductView;
+>>>>>>> 05bb7da93d7c9f4b56c1121855e32934ac4bad2f

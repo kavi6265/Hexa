@@ -1,12 +1,111 @@
 import React, { useState, useEffect } from 'react';
 import { database, auth } from './firebase'; 
 import { ref, onValue } from 'firebase/database';
+<<<<<<< HEAD
 import { useNavigate } from 'react-router-dom';
 import '../css/ProductOrderUser.css';
 
 // 🔹 Image Mapping (id → file name in /public)
 const imageMapping = {
   "2131230840": "about_us.png",
+=======
+import { useParams, useNavigate } from 'react-router-dom';
+import '../css/ProductOrderUser.css';
+
+function ProductOrderUser() {
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((currentUser) => {
+      setUser(currentUser);
+      
+      if (currentUser) {
+        fetchOrders(currentUser.uid);
+      } else {
+        setOrders([]);
+        setLoading(false);
+      }
+    });
+    
+    return () => unsubscribe();
+  }, []);
+
+  const fetchOrders = (userId) => {
+    setLoading(true);
+    const ordersRef = ref(database, `userorders/${userId}`);
+    
+    onValue(ordersRef, (snapshot) => {
+      const ordersList = [];
+      
+      snapshot.forEach((orderSnapshot) => {
+        const orderId = orderSnapshot.key;
+        const orderTotal = orderSnapshot.child("orderTotal").val();
+        const orderTimestamp = orderSnapshot.child("orderTimestamp").val();
+        const username = orderSnapshot.child("username").val();
+        const phno = orderSnapshot.child("phno").val();
+        const notes = orderSnapshot.child("notes").val();
+        const ordered = orderSnapshot.child("odered").val(); // Note the typo from original code
+        const delivered = orderSnapshot.child("delivered").val();
+        const address = orderSnapshot.child("address").val();
+        
+        const products = [];
+        orderSnapshot.forEach((productSnapshot) => {
+          // Skip non-product fields
+          if (!["orderTotal", "orderTimestamp", "username", "phno", "notes", "odered", "delivered", "address"].includes(productSnapshot.key)) {
+            products.push(productSnapshot.val());
+          }
+        });
+        
+        ordersList.push({
+          orderId,
+          orderTotal,
+          orderTimestamp,
+          products,
+          username,
+          phno,
+          notes,
+          ordered,
+          delivered,
+          address
+        });
+      });
+      
+      setOrders(ordersList);
+      setLoading(false);
+    }, (error) => {
+      console.error("Error fetching orders:", error);
+      setLoading(false);
+    });
+  };
+
+  // Helper function to format timest
+  const formatDate = (timestamp) => {
+    if (!timestamp) return "Unknown date";
+    const date = new Date(timestamp);
+    return date.toLocaleDateString('en-US', { 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
+  const handleOrderClick = (orderId) => {
+    if (user && user.uid) {
+      navigate(`/OrderedProductpreview/${user.uid}/${orderId}`);
+    }
+  };
+  // Helper function to get image filename from ID
+  const getImageFilename = (imageId) => {
+    const IMAGE_ID_MAPPING = {
+      // This would contain your image mapping from previous code
+      // Using a sample mapping for brevity
+      "2131230840": "about_us.png",
+>>>>>>> 05bb7da93d7c9f4b56c1121855e32934ac4bad2f
   "2131230841": "afoursheet.png",
   "2131230842": "athreenote.png",
   "2131230843": "athreenotee.jpg",
@@ -141,6 +240,7 @@ const imageMapping = {
   "2131231161": "whitebgcircleprofile.png",
   "2131231162": "whiteblack_bg.png",
   "2131231163": "women1.png",
+<<<<<<< HEAD
   "2131231164": "xoblue.png",  
   "2131231165": "xooblack.png"
 };
@@ -227,6 +327,14 @@ function ProductOrderUser() {
     if (user && user.uid) {
       navigate(`/OrderedProductpreview/${user.uid}/${orderId}`);
     }
+=======
+  "2131231164": "xoblue.png",
+  "2131231165": "xooblack.png"
+      // other mappings
+    };
+    
+    return IMAGE_ID_MAPPING[imageId.toString()] || "unknowenprofile.png";
+>>>>>>> 05bb7da93d7c9f4b56c1121855e32934ac4bad2f
   };
 
   return (
@@ -250,10 +358,16 @@ function ProductOrderUser() {
           </button>
         </div>
       ) : (
+<<<<<<< HEAD
         <div className="orders-list">
           {orders.map((order) => (
             <div key={order.orderId} className="order-card" onClick={() => handleOrderClick(order.orderId)}>
               
+=======
+        <div className="orders-list" >
+          {orders.map((order) => (
+            <div key={order.orderId} className="order-card" onClick={() => handleOrderClick(order.orderId)}>
+>>>>>>> 05bb7da93d7c9f4b56c1121855e32934ac4bad2f
               <div className="order-header">
                 <div className="order-info">
                   <span className="order-id">Order #{order.orderId.substring(0, 8)}</span>
@@ -271,6 +385,7 @@ function ProductOrderUser() {
               </div>
               
               <div className="order-products">
+<<<<<<< HEAD
                 {order.products.map((product, index) => {
                   // Pick image from mapping if productimage is an ID
                   let imgSrc = "unknowenprofile.png";
@@ -301,6 +416,22 @@ function ProductOrderUser() {
                     </div>
                   );
                 })}
+=======
+                {order.products.map((product, index) => (
+                  <div key={index} className="product-item">
+                    <div className="product-image">
+                      <img src={getImageFilename(product.productimage)} alt={product.productname} />
+                    </div>
+                    <div className="product-details">
+                      <h3>{product.productname}</h3>
+                      <div className="product-meta">
+                        <span className="product-qty">Qty: {product.qty}</span>
+                        <span className="product-price">₹{product.productamt}</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+>>>>>>> 05bb7da93d7c9f4b56c1121855e32934ac4bad2f
               </div>
               
               <div className="order-footer">
@@ -321,7 +452,10 @@ function ProductOrderUser() {
                   </button>
                 </div>
               </div>
+<<<<<<< HEAD
 
+=======
+>>>>>>> 05bb7da93d7c9f4b56c1121855e32934ac4bad2f
             </div>
           ))}
         </div>
@@ -330,4 +464,8 @@ function ProductOrderUser() {
   );
 }
 
+<<<<<<< HEAD
 export default ProductOrderUser;
+=======
+export default ProductOrderUser;
+>>>>>>> 05bb7da93d7c9f4b56c1121855e32934ac4bad2f

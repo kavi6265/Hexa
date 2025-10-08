@@ -4,7 +4,11 @@ import { ref, set, get, push } from "firebase/database";
 import { useNavigate } from "react-router-dom";
 import "../css/Checkout.css";
 
+<<<<<<< HEAD
 // Image ID mapping
+=======
+
+>>>>>>> 05bb7da93d7c9f4b56c1121855e32934ac4bad2f
 const IMAGE_ID_MAPPING = {
   "2131230840": "about_us.png",
   "2131230841": "afoursheet.png",
@@ -145,6 +149,7 @@ const IMAGE_ID_MAPPING = {
   "2131231165": "xooblack.png"
 };
 
+<<<<<<< HEAD
 // Extract image name from path
 const extractImageName = (imagePath) => {
   if (!imagePath || typeof imagePath !== "string") return "";
@@ -163,6 +168,63 @@ const getImageUrl = (imageIdOrPath) => {
   const name = extractImageName(imageIdOrPath);
   const id = Object.keys(IMAGE_ID_MAPPING).find(key => IMAGE_ID_MAPPING[key] === name);
   return id ? `/${IMAGE_ID_MAPPING[id]}` : imageIdOrPath;
+=======
+// Create reverse mapping for lookup (image name to ID)
+const REVERSE_IMAGE_MAPPING = {};
+for (const [id, name] of Object.entries(IMAGE_ID_MAPPING)) {
+  REVERSE_IMAGE_MAPPING[name] = id;
+}
+
+// Helper function to extract image name from URL/path
+const extractImageName = (imagePath) => {
+  // First, ensure imagePath is a string
+  if (!imagePath || typeof imagePath !== 'string') {
+    console.warn("Invalid image path:", imagePath);
+    return "";
+  }
+  
+  // Handle different path formats
+  const parts = imagePath.split('/');
+  const fileName = parts[parts.length - 1];
+  return fileName; // Keep the extension for exact matching
+};
+
+// Function to find image ID from path
+const getImageIdFromPath = (imagePath) => {
+  // Direct ID check - if the imagePath is already an ID in our mapping
+  if (IMAGE_ID_MAPPING[imagePath]) {
+    return imagePath; // It's already an ID, return as is
+  }
+  
+  // If imagePath is a number as string, check if it's a valid ID
+  if (/^\d+$/.test(imagePath) && IMAGE_ID_MAPPING[imagePath]) {
+    return imagePath;
+  }
+  
+  // Otherwise try to extract the filename and find its ID
+  const imageName = extractImageName(imagePath);
+  
+  // If no valid image name, return default
+  if (!imageName) return "0";
+  
+  // Look for exact match first
+  if (REVERSE_IMAGE_MAPPING[imageName]) {
+    return REVERSE_IMAGE_MAPPING[imageName];
+  }
+  
+  // If no exact match, try to find by file name without extension
+  const nameWithoutExt = imageName.split('.')[0];
+  
+  // Try to find any mapping that contains this name
+  for (const [id, name] of Object.entries(IMAGE_ID_MAPPING)) {
+    if (name.includes(nameWithoutExt)) {
+      return id;
+    }
+  }
+  
+  // If all else fails, return default
+  return "0";
+>>>>>>> 05bb7da93d7c9f4b56c1121855e32934ac4bad2f
 };
 
 const Checkout = () => {
@@ -170,6 +232,7 @@ const Checkout = () => {
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [totalAmount, setTotalAmount] = useState(0);
+<<<<<<< HEAD
   const [formData, setFormData] = useState({ username: "", phno: "", address: "" });
 
   const navigate = useNavigate();
@@ -190,12 +253,41 @@ const Checkout = () => {
             address: userData.address || ""
           });
         }
+=======
+  const [formData, setFormData] = useState({
+    username: "",
+    phno: "",
+    address: ""
+  });
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((currentUser) => {
+      setUser(currentUser);
+      
+      if (currentUser) {
+        // Fetch complete user details if available
+        const userRef = ref(database, `users/${currentUser.uid}`);
+        get(userRef).then((snapshot) => {
+          if (snapshot.exists()) {
+            const userData = snapshot.val();
+            setFormData(prevData => ({
+              ...prevData,
+              username: userData.name || "",
+              phno: userData.phno || "",
+              address: userData.address || ""
+            }));
+          }
+        });
+        
+>>>>>>> 05bb7da93d7c9f4b56c1121855e32934ac4bad2f
         fetchCartItems(currentUser.uid);
       } else {
         setLoading(false);
         navigate("/login");
       }
     });
+<<<<<<< HEAD
     return () => unsubscribe();
   }, [navigate]);
 
@@ -225,11 +317,50 @@ const Checkout = () => {
 
   const calculateTotal = (items) => {
     const total = items.reduce((sum, item) => sum + (parseFloat(item.productamt) * item.qty), 0);
+=======
+    
+    return () => unsubscribe();
+  }, [navigate]);
+
+  const fetchCartItems = (userId) => {
+    setLoading(true);
+    const userCartRef = ref(database, `userscart/${userId}`);
+    
+    get(userCartRef)
+      .then((snapshot) => {
+        if (snapshot.exists()) {
+          const items = [];
+          snapshot.forEach((childSnapshot) => {
+            items.push({
+              id: childSnapshot.key,
+              ...childSnapshot.val()
+            });
+          });
+          setCartItems(items);
+          calculateTotal(items);
+        } else {
+          setCartItems([]);
+          navigate("/cart"); // Redirect to cart if it's empty
+        }
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching cart items:", error);
+        setLoading(false);
+      });
+  };
+
+  const calculateTotal = (items) => {
+    const total = items.reduce((sum, item) => {
+      return sum + (parseFloat(item.productamt) * item.qty);
+    }, 0);
+>>>>>>> 05bb7da93d7c9f4b56c1121855e32934ac4bad2f
     setTotalAmount(total);
   };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+<<<<<<< HEAD
     setFormData({ ...formData, [name]: value });
   };
 
@@ -287,6 +418,139 @@ const Checkout = () => {
   };
 
   if (loading) return <div className="section-p1"><h2>Loading checkout...</h2></div>;
+=======
+    setFormData({
+      ...formData,
+      [name]: value
+    });
+  };
+
+  const handlePlaceOrder = (e) => {
+    e.preventDefault();
+    
+    if (!user) {
+      alert("Please log in to place an order");
+      navigate("/login");
+      return;
+    }
+    
+    if (!formData.username || !formData.phno || !formData.address) {
+      alert("Please fill in all required fields");
+      return;
+    }
+    
+    // Current timestamp
+    const orderTimestamp = Date.now();
+    
+    // Generate a unique order ID
+    const orderId = push(ref(database, 'orders')).key;
+    
+    // Prepare order metadata
+    const orderMetadata = {
+      address: formData.address,
+      phno: formData.phno,
+      username: formData.username,
+      orderTimestamp: orderTimestamp,
+      orderTotal: totalAmount.toFixed(2),
+      odered: true,
+      delivered: false,
+    };
+    
+    // Prepare order items object
+    const orderItems = {};
+    cartItems.forEach((item) => {
+      try {
+        // Get the image ID from the path
+        const imageId = getImageIdFromPath(item.productimage);
+        
+        // Store the item with image ID instead of path
+        orderItems[item.id] = {
+          productname: item.productname,
+          productamt: item.productamt,
+          productimage: imageId, // Store the image ID instead of the path
+          qty: item.qty,
+          rating: item.rating || 0,
+          discription: item.discription || "",
+          key: item.id
+        };
+        
+        console.log(`Mapped ${item.productimage} to ID: ${imageId}`);
+      } catch (error) {
+        console.error("Error processing item:", item, error);
+        // Still add the item, but with a default image ID
+        orderItems[item.id] = {
+          productname: item.productname,
+          productamt: item.productamt,
+          productimage: "0", // Default image ID
+          qty: item.qty,
+          rating: item.rating || 0,
+          discription: item.discription || "",
+          key: item.id
+        };
+      }
+    });
+    
+    
+    // Create complete order object with metadata and items
+    const completeOrder = {
+      ...orderMetadata,
+      ...orderItems
+    };
+    
+    // Set the order in the database under ordersusers path
+    const ordersUserRef = ref(database, `userorders/${user.uid}/${orderId}`);
+    
+    // Save the order
+    set(ordersUserRef, completeOrder)
+      .then(() => {
+        // Clear the active cart
+        const userActiveCartRef = ref(database, `userscart/${user.uid}`);
+        set(userActiveCartRef, null)
+          .then(() => {
+            // Also clear the userscart reference
+            const userCartRef = ref(database, `userscart/${user.uid}`);
+            set(userCartRef, null)
+              .then(() => {
+                // Navigate to Success component after order is placed
+                navigate("/success", { 
+                  state: { 
+                    orderId: orderId,
+                    totalAmount: totalAmount.toFixed(2) 
+                  } 
+                });
+              })
+              .catch((error) => {
+                console.error("Error clearing userscart:", error);
+                alert("Order placed but failed to clear cart. Please check your orders.");
+              });
+          })
+          .catch((error) => {
+            console.error("Error clearing cart:", error);
+            alert("Order placed but failed to clear cart. Please check your orders.");
+          });
+      })
+      .catch((error) => {
+        console.error("Error placing order:", error);
+        alert("Failed to place order. Please try again.");
+      });
+  };
+
+  if (loading) {
+    return (
+      <div className="section-p1">
+        <h2>Loading checkout...</h2>
+      </div>
+    );
+  }
+
+  const getImageUrl = (imageId) => {
+    // Get the filename from the mapping or use default
+    const filename = IMAGE_ID_MAPPING[imageId.toString()] || "unknowenprofile.png";
+    
+    // Add the leading slash to reference from the public directory
+    return `/${filename}`;
+  };
+>>>>>>> 05bb7da93d7c9f4b56c1121855e32934ac4bad2f
 
   return (
     <div>
@@ -301,6 +565,7 @@ const Checkout = () => {
             <h3>Shipping Details</h3>
             <form onSubmit={handlePlaceOrder}>
               <div className="form-group">
+<<<<<<< HEAD
                 <label>Full Name</label>
                 <input type="text" name="username" value={formData.username} onChange={handleInputChange} required />
               </div>
@@ -327,12 +592,68 @@ const Checkout = () => {
                       alt={item.productname}
                       className="summary-img"
                       onError={(e) => { e.target.src = "/unknowenprofile.png"; }}
+=======
+                <label htmlFor="username">Full Name</label>
+                <input 
+                  type="text" 
+                  id="username" 
+                  name="username" 
+                  value={formData.username} 
+                  onChange={handleInputChange}
+                  required 
+                />
+              </div>
+              
+              <div className="form-group">
+                <label htmlFor="phno">Phone Number</label>
+                <input 
+                  type="tel" 
+                  id="phno" 
+                  name="phno" 
+                  value={formData.phno} 
+                  onChange={handleInputChange}
+                  required 
+                />
+              </div>
+              
+              <div className="form-group">
+                <label htmlFor="address">Delivery Address</label>
+                <textarea 
+                  id="address" 
+                  name="address" 
+                  value={formData.address} 
+                  onChange={handleInputChange}
+                  required 
+                  rows="4"
+                ></textarea>
+              </div>
+              
+              <button type="submit" className="normal">Confirm Order</button>
+            </form>
+          </div>
+          
+          <div className="order-summary">
+            <h3>Order Summary</h3>
+            <div className="summary-items">
+              {cartItems.map((item) => (
+                <div key={item.id} className="summary-item">
+                  <div className="item-info">
+                    <img 
+                      src={getImageUrl(item.productimage)} 
+                      alt={item.productname} 
+                      className="summary-img" 
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = "/unknowenprofile.png"; // Fallback image
+                      }}
+>>>>>>> 05bb7da93d7c9f4b56c1121855e32934ac4bad2f
                     />
                     <div>
                       <h4>{item.productname}</h4>
                       <p>Qty: {item.qty}</p>
                     </div>
                   </div>
+<<<<<<< HEAD
                   <div className="item-price">₹{(parseFloat(item.productamt) * item.qty).toFixed(2)}</div>
                 </div>
               ))}
@@ -342,10 +663,33 @@ const Checkout = () => {
               <div className="total-row"><span>Subtotal</span><span>₹{totalAmount.toFixed(2)}</span></div>
               <div className="total-row"><span>Shipping</span><span>Free</span></div>
               <div className="total-row final-total"><span>Total</span><span>₹{totalAmount.toFixed(2)}</span></div>
+=======
+                  <div className="item-price">
+                    ₹{(parseFloat(item.productamt) * item.qty).toFixed(2)}
+                  </div>
+                </div>
+              ))}
+            </div>
+            
+            <div className="summary-total">
+              <div className="total-row">
+                <span>Subtotal</span>
+                <span>₹{totalAmount.toFixed(2)}</span>
+              </div>
+              <div className="total-row">
+                <span>Shipping</span>
+                <span>Free</span>
+              </div>
+              <div className="total-row final-total">
+                <span>Total</span>
+                <span>₹{totalAmount.toFixed(2)}</span>
+              </div>
+>>>>>>> 05bb7da93d7c9f4b56c1121855e32934ac4bad2f
             </div>
           </div>
         </div>
       </section>
+<<<<<<< HEAD
 
       {/* Footer */}
       <footer className="modern-footer">
@@ -402,10 +746,52 @@ const Checkout = () => {
           <div className="footer-content">
         <p className="copyright1" style={{flexDirection:"row"}}>Developed by <a href="https://rapcodetechsolutions.netlify.app/" className="develop-aa"><img src="/Rapcode.png" style={{width:"20px",height:"20px",display:"flex",margin:"auto",flexDirection:"row", marginLeft:"10px"}} alt="RapCode Logo"></img>RapCode Tech Solutions</a></p>
       </div>
+=======
+      
+      <footer className="section-p1">
+        <div className="col">
+          <h3>Jasa Essential</h3>
+          <h4>Contact</h4>
+          <p><strong>Address:</strong> 562 Wellington Road, Street 32, San Francisco</p>
+          <p><strong>Phone:</strong> +01 2222 345 / (+91) 0 123 456 789</p>
+          <p><strong>Hours:</strong> 10:00 - 18:00, Mon - Sat</p>
+          <div className="follow">
+            <h4>Follow us</h4>
+            <div className="icon">
+              <i className="bx bxl-facebook"></i>
+              <i className="bx bxl-twitter"></i>
+              <i className="bx bxl-instagram"></i>
+              <i className="bx bxl-pinterest-alt"></i>
+              <i className="bx bxl-youtube"></i>
+            </div>
+          </div>
+        </div>
+
+        <div className="col">
+          <h4>About</h4>
+          <a href="#">About us</a>
+          <a href="#">Delivery Information</a>
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms & Conditions</a>
+          <a href="#">Contact Us</a>
+        </div>
+
+        <div className="col">
+          <h4>My Account</h4>
+          <a href="#">Sign In</a>
+          <a href="#">View Cart</a>
+          <a href="#">My Wishlist</a>
+          <a href="#">Track My Order</a>
+          <a href="#">Help</a>
+>>>>>>> 05bb7da93d7c9f4b56c1121855e32934ac4bad2f
         </div>
       </footer>
     </div>
   );
 };
 
+<<<<<<< HEAD
 export default Checkout;
+=======
+export default Checkout;
+>>>>>>> 05bb7da93d7c9f4b56c1121855e32934ac4bad2f

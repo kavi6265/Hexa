@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React, { useState, useEffect } from "react"; 
 import { useNavigate } from "react-router-dom";
 import { database, auth } from "./firebase";
@@ -5,6 +6,14 @@ import { ref, push, set, get } from "firebase/database";
 import "../css/shop.css";
 
 // Static image mapping
+=======
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { database, auth } from "./firebase"; 
+import { ref, push, set, get } from "firebase/database";
+import "../css/shop.css";
+
+>>>>>>> 05bb7da93d7c9f4b56c1121855e32934ac4bad2f
 const IMAGE_ID_MAPPING = {
   "2131230840": "about_us.png",
   "2131230841": "afoursheet.png",
@@ -127,7 +136,11 @@ const IMAGE_ID_MAPPING = {
   "2131231144": "stylishpenblue.jpg",
   "2131231146": "tick.png",
   "2131231147": "tipbox.png",
+<<<<<<< HEAD
   "2131231148": "tikpencil.png",
+=======
+  "2131231148": "tippencil.png",
+>>>>>>> 05bb7da93d7c9f4b56c1121855e32934ac4bad2f
   "2131231151": "top_background.png",
   "2131231152": "uioop.png",
   "2131231153": "unknowenprofile.png",
@@ -145,12 +158,200 @@ const IMAGE_ID_MAPPING = {
   "2131231165": "xooblack.png"
 };
 
+<<<<<<< HEAD
 // Reverse mapping
 const REVERSE_IMAGE_MAPPING = Object.fromEntries(
   Object.entries(IMAGE_ID_MAPPING).map(([id, filename]) => [filename, id])
 );
 
 const Shop = () => {
+=======
+
+// Create a reverse mapping to look up ID by filename
+const createReverseImageMapping = () => {
+  const reverseMapping = {};
+  for (const [id, filename] of Object.entries(IMAGE_ID_MAPPING)) {
+    reverseMapping[filename] = id;
+  }
+  return reverseMapping;
+};
+
+const REVERSE_IMAGE_MAPPING = createReverseImageMapping();
+
+const Shop = () => {
+  const products = [
+    {
+      img: "casio991.jpg",
+      brand: "Casio",
+      name: "FX-991MS Scientific Calculator",
+      price: "₹1165",
+    },
+    {
+      img: "caltrix.jpg",
+      brand: "Caltrix",
+      name: "CX-991S Scientific Calculator",
+      price: "₹600",
+    },
+    {
+      img: "graphh.png",
+      brand: "SVE SIDDHI VINAYAK ENTERPRISES",
+      name: "Graph Notebook - A4 Size, 100 Pages",
+      price: "₹100",
+    },
+    {
+      img: "xooblack.png",
+      brand: "Hauser",
+      name: "XO Ball Pen - Black Ink",
+      price: "₹10",
+    },
+    {
+      img: "xoblue.png",
+      brand: "Hauser",
+      name: "XO Ball Pen - Blue Ink",
+      price: "₹10",
+    },
+    {
+      img: "stylishpenblue.jpg",
+      brand: "Stylish",
+      name: "X3 Ball Pen - Blue (0.7mm)",
+      price: "₹7",
+    },
+    {
+      img: "stylishblackpen.png",
+      brand: "Stylish",
+      name: "X3 Ball Pen - Black (0.7mm)",
+      price: "₹7",
+    },
+    {
+      img: "athreenotee.jpg",
+      brand: "Jasa Essential",
+      name: "A3 Drawing Book",
+      price: "₹80",
+    },
+    {
+      img: "tippencil.png",
+      brand: "Faber-Castell",
+      name: "Tri-Click Mechanical Pencil 0.7mm",
+      price: "₹15",
+    },
+    {
+      img: "bipolar.jpg",
+      brand: "Jasa Essential",
+      name: "Bipolar Graph Book (100 sheets)",
+      price: "₹100",
+    },
+    {
+      img: "tipbox.png",
+      brand: "Camlin Kokuyo",
+      name: "0.7mm B Lead Tube",
+      price: "₹5",
+    },
+    {
+      img: "scale.png",
+      brand: "Camlin",
+      name: "Exam Portfolio Scale 30cm",
+      price: "₹10",
+    },
+    { img: "eraser.png", brand: "Apsara", name: "White Eraser", price: "₹5" },
+    {
+      img: "drafter.png",
+      brand: "ORFORX",
+      name: "Mini Drafter with Steel Rod",
+      price: "₹350",
+    },
+    {
+      img: "afoursheet.png",
+      brand: "TNPL",
+      name: "A4 Copier Paper 80 GSM (500 Sheets)",
+      price: "₹280",
+    },
+    {
+      img: "afoursheet.png",
+      brand: "TNPL",
+      name: "A4 Copier Paper 70 GSM (500 Sheets)",
+      price: "₹270",
+    },
+    {
+      img: "note.png",
+      brand: "Classmate",
+      name: "Long Size Notebook A4 - 120 Pages (UnRuled)",
+      price: "₹60",
+    },
+    {
+      img: "note.png",
+      brand: "Classmate",
+      name: "Long Size Notebook A4 - 60 Pages (Ruled)",
+      price: "₹30",
+    },
+    {
+      img: "note.png",
+      brand: "Classmate",
+      name: "Long Size Notebook A4 - 60 Pages (UnRuled)",
+      price: "₹30",
+    },
+    {
+      img: "smallnote.jpg",
+      brand: "Classmate",
+      name: "Small Size Notebook - 120 Pages (Ruled)",
+      price: "₹40",
+    },
+    {
+      img: "smallnote.jpg",
+      brand: "Classmate",
+      name: "Small Size Notebook - 120 Pages (UnRuled)",
+      price: "₹40",
+    },
+    {
+      img: "labcourt.png",
+      brand: "ALIS",
+      name: "Unisex Lab Coat/Apron Cotton White",
+      price: "₹500",
+    },
+    {
+      img: "stabler.jpg",
+      brand: "Kangaro",
+      name: "No. 10 Stapler",
+      price: "₹60",
+    },
+    {
+      img: "files.jpg",
+      brand: "Shuban",
+      name: "Documents File Folder with Snap Button",
+      price: "₹20",
+    },
+    {
+      img: "flair.jpg",
+      brand: "FLAIR",
+      name: "FC-991 MS Scientific Calculator (12 Digit)",
+      price: "₹670",
+    },
+    {
+      img: "calculatorr.png",
+      brand: "Casio",
+      name: "FX-991ES Plus-2nd Edition Scientific Calculator",
+      price: "₹1350",
+    },
+    {
+      img: "hotot.jpg",
+      brand: "Generic",
+      name: "Photo Frame (5*7 Inches)",
+      price: "₹350",
+    },
+    {
+      img: "phto.jpg",
+      brand: "Generic",
+      name: "Photo Frame (5*7 Inches)",
+      price: "₹350",
+    },
+    {
+      img: "note.png",
+      brand: "Classmate",
+      name: "Long Size Notebook A4 - 120 Pages (Ruled)",
+      price: "₹60",
+    },
+  ];
+  
+>>>>>>> 05bb7da93d7c9f4b56c1121855e32934ac4bad2f
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [user, setUser] = useState(null);
@@ -161,6 +362,7 @@ const Shop = () => {
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const [toastType, setToastType] = useState("success");
+<<<<<<< HEAD
   const [dynamicProducts, setDynamicProducts] = useState([]);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [touchStartX, setTouchStartX] = useState(null);
@@ -304,15 +506,78 @@ const handleTouchEnd = () => {
 
   const addToCart = async (e, product) => {
     e.stopPropagation();
+=======
+
+  // Categories derived from product brands
+  const categories = ["All", "Casio", "Classmate", "Faber-Castell", "Hauser", "Jasa Essential"];
+
+  const handleProductClick = (product) => {
+    navigate("/product", { state: { product } });
+  };
+
+  // Add useEffect to check authentication status
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((currentUser) => {
+      setUser(currentUser);
+      
+      // If user is logged in, fetch their cart items
+      if (currentUser) {
+        setLoading(true);
+        const userCartRef = ref(database, `userscart/${currentUser.uid}`);
+        get(userCartRef).then((snapshot) => {
+          if (snapshot.exists()) {
+            const items = [];
+            snapshot.forEach((childSnapshot) => {
+              items.push({
+                id: childSnapshot.key,
+                ...childSnapshot.val()
+              });
+            });
+            setCartItems(items);
+          }
+          setLoading(false);
+        }).catch((error) => {
+          console.error("Error fetching cart items:", error);
+          setLoading(false);
+        });
+      } else {
+        // Clear cart items when user logs out
+        setCartItems([]);
+      }
+    });
+    
+    // Clean up subscription on unmount
+    return () => unsubscribe();
+  }, []);
+
+  const isProductInCart = (product) => {
+    return cartItems.some(item => item.productname === product.name);
+  };
+
+  const getImageIdForFilename = (filename) => {
+    // Find the image ID from the reverse mapping
+    return REVERSE_IMAGE_MAPPING[filename] || "0"; // Default to "0" if not found
+  };
+
+  const addToCart = (e, product) => {
+    e.stopPropagation(); // Prevent triggering the product click
+    
+>>>>>>> 05bb7da93d7c9f4b56c1121855e32934ac4bad2f
     if (!user) {
       showToastNotification("Please login to add items to cart", "warning");
       navigate("/login");
       return;
     }
+<<<<<<< HEAD
+=======
+    
+    // Check if product is already in cart
+>>>>>>> 05bb7da93d7c9f4b56c1121855e32934ac4bad2f
     if (isProductInCart(product)) {
       showToastNotification("This product is already in your cart!", "info");
       return;
     }
+<<<<<<< HEAD
     const imageId = getImageIdForFilename(product.img);
     const productData = {
       productname: product.name,
@@ -384,26 +649,139 @@ const handleTouchEnd = () => {
   )}
 </section>
 
+=======
+    
+    // Get image ID directly from the reverse mapping
+    const imageId = getImageIdForFilename(product.img);
+    
+    // If no matching ID was found, log an error
+    if (imageId === "0") {
+      console.warn(`No image ID found for ${product.img}`);
+    }
+    
+    // Prepare product data for Firebase
+    const productData = {
+      productname: product.name,
+      productimage: parseInt(imageId, 10), // Store the numerical image ID 
+      productamt: product.price.replace('₹', ''),
+      qty: 1,
+      rating: product.rating || 0,
+      discription: `Brand: ${product.brand}, Product: ${product.name}`
+    };
+    
+    setLoading(true);
+    
+    // Get reference to the user's cart
+    const userCartRef = ref(database, `userscart/${user.uid}`);
+    
+    // Create a new unique entry for this product
+    const newProductRef = push(userCartRef);
+    
+    // Set the product data in Firebase
+    set(newProductRef, productData)
+      .then(() => {
+        showToastNotification("Product added to cart successfully!", "success");
+        // Add the new item to local cart items state to update UI
+        setCartItems([...cartItems, { 
+          id: newProductRef.key, 
+          ...productData 
+        }]);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error adding to cart: ", error);
+        showToastNotification("Failed to add product to cart. Please try again.", "error");
+        setLoading(false);
+      });
+  };
+
+  const showToastNotification = (message, type) => {
+    setToastMessage(message);
+    setToastType(type);
+    setShowToast(true);
+    
+    // Auto-hide toast after 3 seconds
+    setTimeout(() => {
+      setShowToast(false);
+    }, 3000);
+  };
+
+  const clearSearch = () => {
+    setSearchQuery("");
+  };
+
+  const handleCategoryClick = (category) => {
+    setActiveCategory(category);
+  };
+
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+  };
+
+  // Filter products based on search and category
+  const filteredProducts = products.filter((product) => {
+    const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                         product.brand.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesCategory = activeCategory === "All" || product.brand === activeCategory;
+    
+    return matchesSearch && matchesCategory;
+  });
+
+  return (
+    <div className="shop-container">
+      {/* Toast Notification */}
+      {showToast && (
+        <div className={`toast-notification ${toastType}`}>
+          {toastType === "success" && <i className="bx bx-check-circle"></i>}
+          {toastType === "error" && <i className="bx bx-error-circle"></i>}
+          {toastType === "warning" && <i className="bx bx-error"></i>}
+          {toastType === "info" && <i className="bx bx-info-circle"></i>}
+          <span>{toastMessage}</span>
+        </div>
+      )}
+>>>>>>> 05bb7da93d7c9f4b56c1121855e32934ac4bad2f
 
       {/* Hero Section */}
       <section className="hero-section">
         <div className="hero-content">
+<<<<<<< HEAD
           <h2>Find Your Perfect Stationery</h2>
           <p>Discover quality supplies for school, college, and office needs</p>
           <div className={`search-containershop ${searchFocused ? "focused" : ""}`}>
             <input
               type="text"
+=======
+          <h2 className="find">Find Your Perfect Stationery</h2>
+          <p>Discover quality supplies for school, college, and office needs</p>
+          
+          {/* Search Container */}
+          <div className={`search-containershop ${searchFocused ? 'focused' : ''}`}>
+            <i className="bx bx-search search-iconshop"></i>
+            <input
+              type="text"
+              className="search-inputshop"
+>>>>>>> 05bb7da93d7c9f4b56c1121855e32934ac4bad2f
               placeholder="Search for products..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onFocus={() => setSearchFocused(true)}
               onBlur={() => setSearchFocused(false)}
             />
+<<<<<<< HEAD
             {searchQuery && <button className="clear-search" onClick={clearSearch}>×</button>}
+=======
+            {searchQuery && (
+              <i className="bx bx-x clear-searchshop" onClick={clearSearch}></i>
+            )}
+>>>>>>> 05bb7da93d7c9f4b56c1121855e32934ac4bad2f
           </div>
         </div>
       </section>
 
+<<<<<<< HEAD
       {/* Categories Section */}
       <section className="categories-section">
         {categories.map((category) => (
@@ -467,11 +845,98 @@ const handleTouchEnd = () => {
       {/* Footer */}
       <footer className="modern-footer">
          <div className="footer-content">
+=======
+      {/* Category Section */}
+      <section className="category-section">
+        <div className="category-container">
+          {categories.map((category, index) => (
+            <button
+              key={index}
+              className={`category-btn ${activeCategory === category ? 'active' : ''}`}
+              onClick={() => handleCategoryClick(category)}
+            >
+              {category}
+              {activeCategory === category && <span className="category-underline"></span>}
+            </button>
+          ))}
+        </div>
+      </section>
+
+      {/* Products Section */}
+      <section className="products-section">
+        <div className="section-header">
+          <h2>Featured Products</h2>
+          <div className="section-line" style={{ width: '60px' }}></div>
+          <p>Quality stationery for all your needs</p>
+        </div>
+
+        {loading ? (
+          <div className="loading-spinner">
+            <div className="spinner"></div>
+            <p>Loading products...</p>
+          </div>
+        ) : filteredProducts.length > 0 ? (
+          <div className="products-grid">
+            {filteredProducts.map((product, index) => {
+              const inCart = isProductInCart(product);
+              
+              return (
+                <div
+                  className="product-card"
+                  key={index}
+                  onClick={() => handleProductClick(product)}
+                >
+                  <div className="product-image-container">
+                    <img src={product.img} alt={product.name} />
+                    <div className="product-actions">
+                      <button 
+                        className={`cart-btn ${inCart ? 'in-cart' : ''}`}
+                        onClick={(e) => addToCart(e, product)}
+                      >
+                        <i className={`bx ${inCart ? 'bx-check' : 'bx-cart'}`}></i>
+                      </button>
+                      <button className="view-btn">
+                        <i className="bx bx-show"></i>
+                      </button>
+                    </div>
+                  </div>
+                  <div className="product-info">
+                    <span className="product-brand">{product.brand}</span>
+                    <h5 className="product-name">{product.name}</h5>
+                    <div className="product-footer">
+                      <span className="product-price">{product.price}</span>
+                      
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="no-products">
+            <i className="bx bx-search-alt"></i>
+            <h3>No Products Found</h3>
+            <p>We couldn't find any products matching your search criteria.</p>
+            <button onClick={clearSearch}>Clear Search</button>
+          </div>
+        )}
+      </section>
+
+    
+
+      {/* Modern Footer */}
+      <footer className="modern-footer">
+        <div className="footer-content">
+>>>>>>> 05bb7da93d7c9f4b56c1121855e32934ac4bad2f
           <div className="footer-column brand-column">
             <h3>Jasa Essential</h3>
             <p>Your trusted partner for quality stationery products for students and professionals. We offer a wide range of supplies at competitive prices.</p>
             <div className="social-icons">
+<<<<<<< HEAD
               <a href="https://www.instagram.com/jasa_essential?igsh=MWVpaXJiZGhzeDZ4Ng=="><i className="bx bxl-instagram"></i></a>
+=======
+            <a href="https://www.instagram.com/jasa_essential?igsh=MWVpaXJiZGhzeDZ4Ng=="><i className="bx bxl-instagram"></i></a>
+>>>>>>> 05bb7da93d7c9f4b56c1121855e32934ac4bad2f
             </div>
           </div>
           
@@ -501,12 +966,17 @@ const handleTouchEnd = () => {
             <h4>Contact Us</h4>
             <p><i className="bx bx-map"></i>2/3 line medu pension line 2 nd street  line medu , salem 636006</p>
             <p><i className="bx bx-phone"></i> (+91) 7418676705</p>
+<<<<<<< HEAD
+=======
+            
+>>>>>>> 05bb7da93d7c9f4b56c1121855e32934ac4bad2f
             <p><i className="bx bx-envelope"></i> jasaessential@gmail.com</p>
           </div>
         </div>
         
         <div className="footer-bottom" style={{display:"block"}}>
           <p>&copy; 2025 Jasa Essential. All Rights Reserved.</p>
+<<<<<<< HEAD
           <div className="footer-content">
             <p className="copyright1" style={{flexDirection:"row"}}>
               Developed by <a href="https://rapcodetechsolutions.netlify.app/" className="develop-aa">
@@ -517,8 +987,30 @@ const handleTouchEnd = () => {
           </div>
         </div>
       </footer>
+=======
+          {/* <div className="payment-methods">
+            <i className="bx bxl-visa"></i>
+            <i className="bx bxl-mastercard"></i>
+            <i className="bx bxl-paypal"></i>
+            <i className="bx bxl-google-pay"></i>
+          </div> */}
+          <div className="footer-content">
+        <p className="copyright1" style={{flexDirection:"row"}}>Developed by <a href="https://rapcodetechsolutions.netlify.app/" className="develop-aa"><img src="/Rapcode.png" style={{width:"20px",height:"20px",display:"flex",margin:"auto",flexDirection:"row", marginLeft:"10px"}} alt="RapCode Logo"></img>RapCode Tech Solutions</a></p>
+      </div>
+        </div>
+      </footer>
+
+      {/* Back to Top Button */}
+      <button className="back-to-top" onClick={scrollToTop}>
+        <i className="bx bx-up-arrow-alt"></i>
+      </button>
+>>>>>>> 05bb7da93d7c9f4b56c1121855e32934ac4bad2f
     </div>
   );
 };
 
+<<<<<<< HEAD
 export default Shop;
+=======
+export default Shop;
+>>>>>>> 05bb7da93d7c9f4b56c1121855e32934ac4bad2f
